@@ -4,14 +4,15 @@
  * @copyright  Copyright (c) 2015 by  ESS-UA.
  */
 
-class Ess_M2ePro_Model_Upgrade_Modifier_ConfigUpdater extends Ess_M2ePro_Model_Upgrade_Modifier_Abstract
+class Ess_M2ePro_Model_Upgrade_Modifier_Config extends Ess_M2ePro_Model_Upgrade_Modifier_Abstract
 {
     //####################################
 
     public function insert($group, $key, $value = NULL, $notice = NULL)
     {
-        $connection = $this->getConnection();
-        $tableName = $this->getTableName();
+        if(!$this->isTableExists()) {
+            throw new Zend_Db_Exception("Table is not exists");
+        }
 
         $preparedData = array(
             'group' => $group,
@@ -23,10 +24,10 @@ class Ess_M2ePro_Model_Upgrade_Modifier_ConfigUpdater extends Ess_M2ePro_Model_U
         $preparedData['update_date'] = $this->getCurrentDateTime();
         $preparedData['create_date'] = $this->getCurrentDateTime();
 
-        return $connection->insert($tableName, $preparedData);
+        return $this->getConnection()->insert($this->getTableName(), $preparedData);
     }
 
-    //####################################
+    // ----------------------------------
 
     public function updateGroup($value, $where)
     {
@@ -45,23 +46,25 @@ class Ess_M2ePro_Model_Upgrade_Modifier_ConfigUpdater extends Ess_M2ePro_Model_U
 
     private function update($field, $value, $where)
     {
-        $connection = $this->getConnection();
-        $tableName = $this->getTableName();
+        if(!$this->isTableExists()) {
+            throw new Zend_Db_Exception("Table is not exists");
+        }
 
         $preparedData = array(
             $field => $value,
             'update_date' => $this->getCurrentDateTime()
         );
 
-        return $connection->update($tableName, $preparedData, $where);
+        return $this->getConnection()->update($this->getTableName(), $preparedData, $where);
     }
 
-    //####################################
+    // ----------------------------------
 
     public function delete($group, $key = NULL)
     {
-        $connection = $this->getConnection();
-        $tableName = $this->getTableName();
+        if(!$this->isTableExists()) {
+            throw new Zend_Db_Exception("Table is not exists");
+        }
 
         $where = array(
             '`group` = ?' => $group
@@ -71,25 +74,38 @@ class Ess_M2ePro_Model_Upgrade_Modifier_ConfigUpdater extends Ess_M2ePro_Model_U
             $where['`key` = ?'] = $key;
         }
 
-        return $connection->delete($tableName, $where);
+        return $this->getConnection()->delete($this->getTableName(), $where);
     }
 
     //####################################
 
-    public function isExists($group, $key = NULL)
+    public function isTableExists()
     {
-        $connection = $this->getConnection();
         $tableName = $this->getTableName();
 
-        $query = $connection->select()
-            ->from($tableName)
-            ->where($connection->quoteInto('`group` = ?', $group));
-
-        if (!is_null($key)) {
-            $query->where($connection->quoteInto('`key` = ?', $key));
+        if (!empty($tableName) &&
+            in_array($tableName, $this->getInstaller()->getTablesObject()->getAllHistoryConfigEntities())) {
+            return true;
         }
 
-        $result = $connection->fetchOne($query);
+        return false;
+    }
+
+    public function isExists($group, $key = NULL)
+    {
+        if(!$this->isTableExists()) {
+            throw new Zend_Db_Exception("Table is not exists");
+        }
+
+        $query = $this->getConnection()->select()
+                      ->from($this->getTableName())
+                      ->where($this->getConnection()->quoteInto('`group` = ?', $group));
+
+        if (!is_null($key)) {
+            $query->where($this->getConnection()->quoteInto('`key` = ?', $key));
+        }
+
+        $result = $this->getConnection()->fetchOne($query);
         return (bool) $result;
     }
 

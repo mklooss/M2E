@@ -4,7 +4,7 @@
  * @copyright  Copyright (c) 2013 by  ESS-UA.
  */
 
-class Ess_M2ePro_Model_Mysql4_Order_Repair_Collection
+class Ess_M2ePro_Model_Mysql4_Order_Matching_Collection
     extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
     // ########################################
@@ -12,7 +12,7 @@ class Ess_M2ePro_Model_Mysql4_Order_Repair_Collection
     public function _construct()
     {
         parent::_construct();
-        $this->_init('M2ePro/Order_Repair');
+        $this->_init('M2ePro/Order_Matching');
     }
 
     // ########################################

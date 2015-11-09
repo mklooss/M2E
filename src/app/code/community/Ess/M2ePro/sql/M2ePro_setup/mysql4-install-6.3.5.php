@@ -440,20 +440,19 @@ ENGINE = INNODB
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
-DROP TABLE IF EXISTS m2epro_order_repair;
-CREATE TABLE m2epro_order_repair (
+DROP TABLE IF EXISTS m2epro_order_matching;
+CREATE TABLE m2epro_order_matching (
   id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   product_id INT(11) UNSIGNED NOT NULL,
-  input_data TEXT DEFAULT NULL,
-  output_data TEXT DEFAULT NULL,
-  type TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-  hash VARCHAR(50) DEFAULT NULL,
+  input_variation_options TEXT DEFAULT NULL,
+  output_variation_options TEXT DEFAULT NULL,
+  `hash` VARCHAR(50) DEFAULT NULL,
   component VARCHAR(10) NOT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX component (component),
-  INDEX hash (hash),
+  INDEX `hash` (`hash`),
   INDEX product_id (product_id)
 )
 ENGINE = INNODB
@@ -725,7 +724,7 @@ INSERT INTO m2epro_primary_config (`group`,`key`,`value`,`notice`,`update_date`,
   ('/M2ePro/server/', 'messages', '[]', 'Server messages', '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/M2ePro/server/', 'application_key', 'b79a495170da3b081c9ebae6c255c7fbe1b139b5', NULL,
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
-  ('/M2ePro/server/', 'installation_key', '{$installer->generateHash()}', 'Unique identifier of M2E instance',
+  ('/M2ePro/server/', 'installation_key', '{$installer->generateRandomHash()}', 'Unique identifier of M2E instance',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/modules/', 'M2ePro', '0.0.0.r0', NULL, '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/server/', 'baseurl_1', 'https://s1.m2epro.com/', 'Support server base url',
@@ -882,7 +881,8 @@ INSERT INTO m2epro_wizard VALUES
   (5, 'buy', 'common', 0, NULL, 0, 4),
   (6, 'migrationNewAmazon', 'common', 3, NULL, 1, 5),
   (7, 'removedPlay', 'common', 3, NULL, 0, 6),
-  (8, 'ebayProductDetails', 'ebay', 3, NULL, 1, 7);
+  (8, 'ebayProductDetails', 'ebay', 3, NULL, 1, 7),
+  (9, 'fullAmazonCategories', 'common', 3, NULL, 1, 8);
 
 SQL
 );
@@ -1064,6 +1064,7 @@ CREATE TABLE m2epro_ebay_item (
   marketplace_id INT(11) UNSIGNED NOT NULL,
   product_id INT(11) UNSIGNED NOT NULL,
   store_id INT(11) UNSIGNED NOT NULL,
+  variations TEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
@@ -1695,9 +1696,15 @@ CREATE TABLE m2epro_ebay_template_shipping (
   marketplace_id INT(11) UNSIGNED NOT NULL,
   title VARCHAR(255) NOT NULL,
   is_custom_template TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
-  country VARCHAR(255) NOT NULL,
-  postal_code VARCHAR(255) NOT NULL,
-  address VARCHAR(255) NOT NULL,
+  country_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
+  country_custom_value VARCHAR(255) NOT NULL,
+  country_custom_attribute VARCHAR(255) NOT NULL,
+  postal_code_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  postal_code_custom_value VARCHAR(255) NOT NULL,
+  postal_code_custom_attribute VARCHAR(255) NOT NULL,
+  address_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  address_custom_value VARCHAR(255) NOT NULL,
+  address_custom_attribute VARCHAR(255) NOT NULL,
   dispatch_time INT(11) UNSIGNED NOT NULL DEFAULT 1,
   local_shipping_rate_table_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   international_shipping_rate_table_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
@@ -2058,7 +2065,7 @@ INSERT INTO m2epro_marketplace VALUES
 
 INSERT INTO m2epro_ebay_marketplace VALUES
     (1, 'USD', 'us', 'en_US', 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1),
-    (2, 'CAD,USD', 'ca', 'en_CA', 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1),
+    (2, 'CAD,USD', 'ca', 'en_CA', 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1),
     (3, 'GBP', 'gb', 'en_GB', 3, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1),
     (4, 'AUD', 'au', 'en_AU', 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1),
     (5, 'EUR', 'at', 'de_AT', 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
@@ -2075,7 +2082,7 @@ INSERT INTO m2epro_ebay_marketplace VALUES
     (16, 'INR', 'in', 'hi_IN', 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (17, 'EUR', 'ie', 'en_IE', 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (18, 'MYR', 'my', 'ms_MY', 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
-    (19, 'CAD,USD', 'ca', 'fr_CA', 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0),
+    (19, 'CAD,USD', 'ca', 'fr_CA', 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0),
     (20, 'PHP', 'ph', 'fil_PH', 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (21, 'PLN', 'pl', 'pl_PL', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (22, 'SGD', 'sg', 'zh_SG', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
@@ -2117,11 +2124,10 @@ CREATE TABLE m2epro_amazon_dictionary_category (
   category_id INT(11) UNSIGNED NOT NULL,
   parent_category_id INT(11) UNSIGNED DEFAULT NULL,
   browsenode_id DECIMAL(20, 0) UNSIGNED NOT NULL,
-  product_data_nick VARCHAR(255) DEFAULT NULL,
+  product_data_nicks VARCHAR(500) DEFAULT NULL,
   title VARCHAR(255) NOT NULL,
   path VARCHAR(500) DEFAULT NULL,
   keywords TEXT DEFAULT NULL,
-  required_attributes TEXT DEFAULT NULL,
   is_leaf TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   INDEX browsenode_id (browsenode_id),
@@ -2131,7 +2137,25 @@ CREATE TABLE m2epro_amazon_dictionary_category (
   INDEX path (path),
   INDEX parent_category_id (parent_category_id),
   INDEX title (title),
-  INDEX product_data_nick (product_data_nick)
+  INDEX product_data_nicks (product_data_nicks)
+)
+ENGINE = MYISAM
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+DROP TABLE IF EXISTS m2epro_amazon_dictionary_category_product_data;
+CREATE TABLE m2epro_amazon_dictionary_category_product_data (
+  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  marketplace_id INT(11) UNSIGNED NOT NULL,
+  browsenode_id INT(11) UNSIGNED NOT NULL,
+  product_data_nick VARCHAR(255) NOT NULL,
+  is_applicable TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  required_attributes TEXT DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX marketplace_id (marketplace_id),
+  INDEX browsenode_id (browsenode_id),
+  INDEX product_data_nick (product_data_nick),
+  INDEX is_applicable (is_applicable)
 )
 ENGINE = MYISAM
 CHARACTER SET utf8
@@ -2192,7 +2216,8 @@ CREATE TABLE m2epro_amazon_item (
   sku VARCHAR(255) NOT NULL,
   product_id INT(11) UNSIGNED NOT NULL,
   store_id INT(11) UNSIGNED NOT NULL,
-  variation_options TEXT DEFAULT NULL,
+  variation_product_options TEXT DEFAULT NULL,
+  variation_channel_options TEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
@@ -2520,6 +2545,8 @@ CREATE TABLE m2epro_amazon_template_description_definition (
   description_template LONGTEXT NOT NULL,
   image_main_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   image_main_attribute VARCHAR(255) NOT NULL,
+  image_variation_difference_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  image_variation_difference_attribute VARCHAR(255) NOT NULL,
   gallery_images_mode TINYINT(2) UNSIGNED NOT NULL,
   gallery_images_limit TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   gallery_images_attribute VARCHAR(255) NOT NULL,
@@ -2695,7 +2722,7 @@ INSERT INTO m2epro_synchronization_config (`group`,`key`,`value`,`notice`,`updat
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/amazon/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
-  ('/amazon/other_listings/update/', 'interval', '3600', 'in seconds',
+  ('/amazon/other_listings/update/', 'interval', '86400', 'in seconds',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/amazon/other_listings/update/', 'last_time', NULL, 'Last check time',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
@@ -2733,7 +2760,7 @@ INSERT INTO m2epro_marketplace VALUES
   (32, 9, 'China', 'CN', 'amazon.cn', 0, 9, 'Asia / Pacific', 'amazon', '2013-05-08 00:00:00', '2013-05-08 00:00:00');
 
 INSERT INTO m2epro_amazon_marketplace VALUES
-  (24, '8636-1433-4377', 'USD',0),
+  (24, '8636-1433-4377', 'CAD',0),
   (25, '7078-7205-1944', 'EUR',1),
   (26, '7078-7205-1944', 'EUR',1),
   (27, NULL, '',1),
@@ -2809,7 +2836,7 @@ CREATE TABLE m2epro_buy_item (
   sku VARCHAR(255) NOT NULL,
   product_id INT(11) UNSIGNED NOT NULL,
   store_id INT(11) UNSIGNED NOT NULL,
-  variation_options TEXT DEFAULT NULL,
+  variation_product_options TEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
@@ -3204,7 +3231,7 @@ INSERT INTO `m2epro_synchronization_config` (`group`,`key`,`value`,`notice`,`upd
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/buy/other_listings/update/', 'last_time', NULL, 'Last check time',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
-  ('/buy/other_listings/update/', 'interval', '3600', 'in seconds',
+  ('/buy/other_listings/update/', 'interval', '86400', 'in seconds',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/buy/other_listings/title/', 'mode', '1', '0 - disable, \r\n1 - enable',
    '2013-05-08 00:00:00', '2013-05-08 00:00:00'),

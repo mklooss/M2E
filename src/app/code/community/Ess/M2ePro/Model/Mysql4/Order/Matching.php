@@ -4,14 +4,14 @@
  * @copyright  Copyright (c) 2013 by  ESS-UA.
  */
 
-class Ess_M2ePro_Model_Mysql4_Order_Repair
+class Ess_M2ePro_Model_Mysql4_Order_Matching
     extends Ess_M2ePro_Model_Mysql4_Abstract
 {
     // ########################################
 
     public function _construct()
     {
-        $this->_init('M2ePro/Order_Repair', 'id');
+        $this->_init('M2ePro/Order_Matching', 'id');
     }
 
     // ########################################
