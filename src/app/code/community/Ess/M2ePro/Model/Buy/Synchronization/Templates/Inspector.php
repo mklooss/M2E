@@ -659,7 +659,7 @@ class Ess_M2ePro_Model_Buy_Synchronization_Templates_Inspector
             return true;
         }
 
-        $deviation = abs($onlinePrice - $productPrice) / $onlinePrice * 100;
+        $deviation = round(abs($onlinePrice - $productPrice) / $onlinePrice * 100, 2);
 
         return $deviation > $buySynchronizationTemplate->getReviseUpdatePriceMaxAllowedDeviation();
     }

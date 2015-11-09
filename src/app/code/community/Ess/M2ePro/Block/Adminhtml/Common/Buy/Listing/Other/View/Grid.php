@@ -47,7 +47,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_Other_View_Grid extends Mage
         );
 
         // Add Filter By Account
-        $accountFilter = $this->getRequest()->getParam('buyAccount');
+        $accountFilter = $this->getRequest()->getParam('account');
         if (!empty($accountFilter)) {
             $collection->addFieldToFilter('account_id', $accountFilter);
         }
@@ -267,8 +267,10 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_Other_View_Grid extends Mage
 
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        if (is_null($value)) {
             $value = '<i style="color:gray;">receiving...</i>';
+        } elseif ($value == '') {
+            $value = '<i style="color:gray;">none</i>';
         } else {
             $value = '<span>' . Mage::helper('M2ePro')->escapeHtml($value) . '</span>';
         }
@@ -443,8 +445,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_Other_View_Grid extends Mage
         $string = '';
 
         switch ((int)$actionRows['action']) {
-            case Ess_M2ePro_Model_Listing_Other_Log::ACTION_CHANGE_STATUS_ON_CHANNEL:
-                $string = Mage::helper('M2ePro')->__('Status Change');
+            case Ess_M2ePro_Model_Listing_Other_Log::ACTION_CHANNEL_CHANGE:
+                $string = Mage::helper('M2ePro')->__('Channel Change');
                 break;
         }
 

@@ -361,9 +361,8 @@ class Ess_M2ePro_Adminhtml_Ebay_CategoryController extends Ess_M2ePro_Controller
 
         $data = array();
 
-        if (is_null($parentCategoryId)
-            || (in_array($categoryType, $ebayCategoryTypes) && is_null($marketplaceId))
-            || (in_array($categoryType, $storeCategoryTypes) && is_null($accountId))
+        if ((in_array($categoryType, $ebayCategoryTypes) && is_null($marketplaceId)) ||
+            (in_array($categoryType, $storeCategoryTypes) && is_null($accountId))
         ) {
             $this->getResponse()->setBody(json_encode($data));
             return;

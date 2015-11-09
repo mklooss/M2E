@@ -84,4 +84,12 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing_Add_Review extends Ess_M2ePro_Bl
     }
 
     // ####################################
+
+    public function getComponentTitle()
+    {
+        $component = $this->getComponent();
+        return Mage::helper('M2ePro/Component_' . ucfirst($component))->getChannelTitle();
+    }
+
+    // ####################################
 }

@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Configuration_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
-    // ########################################
-
     const TAB_ID_ACCOUNT                = 'account';
     const TAB_ID_MARKETPLACE            = 'marketplace';
     const TAB_ID_SYNCHRONIZATION        = 'synchronization';
@@ -173,5 +171,4 @@ class Ess_M2ePro_Block_Adminhtml_Common_Configuration_Tabs extends Mage_Adminhtm
     }
 
     // ########################################
-
 }

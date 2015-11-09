@@ -347,7 +347,7 @@ class Ess_M2ePro_Model_Amazon_Search_Settings
 
         $searchMethod = $searchMethods[$this->step];
 
-        if ($searchMethod == 'byAsin' && Mage::helper('M2ePro')->isISBN13($this->getQueryParam())) {
+        if ($searchMethod == 'byAsin' && Mage::helper('M2ePro')->isISBN($this->getQueryParam())) {
             $searchMethod = 'byIdentifier';
         }
 
@@ -386,7 +386,6 @@ class Ess_M2ePro_Model_Amazon_Search_Settings
         /** @var Ess_M2ePro_Model_Amazon_Listing_Product_Variation_Matcher_Attribute $attributeMatcher */
         $attributeMatcher = Mage::getModel('M2ePro/Amazon_Listing_Product_Variation_Matcher_Attribute');
         $attributeMatcher->setMagentoProduct($this->getListingProduct()->getMagentoProduct());
-        $attributeMatcher->setMarketplaceId($this->getListingProduct()->getListing()->getMarketplaceId());
         $attributeMatcher->setDestinationAttributes(array_keys($result['variations']['set']));
 
         return $attributeMatcher;

@@ -13,8 +13,6 @@ class Ess_M2ePro_Model_Order_Item extends Ess_M2ePro_Model_Component_Parent_Abst
     // Product is disabled.
     // Order Import does not support product type: %type%.
 
-    // ########################################
-
     /** @var Ess_M2ePro_Model_Order */
     private $order = NULL;
 

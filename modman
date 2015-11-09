@@ -5,6 +5,7 @@ src/app/etc/modules/Ess_M2ePro.xml                            app/etc/modules/Es
 src/app/locale/de_AT/Ess_M2ePro.csv                           app/locale/de_AT/Ess_M2ePro.csv
 src/app/locale/de_CH/Ess_M2ePro.csv                           app/locale/de_CH/Ess_M2ePro.csv
 src/app/locale/de_DE/Ess_M2ePro.csv                           app/locale/de_DE/Ess_M2ePro.csv
+src/app/locale/en_GB/Ess_M2ePro.csv                           app/locale/en_GB/Ess_M2ePro.csv
 src/app/locale/es_ES/Ess_M2ePro.csv                           app/locale/es_ES/Ess_M2ePro.csv
 src/app/locale/fr_CA/Ess_M2ePro.csv                           app/locale/fr_CA/Ess_M2ePro.csv
 src/app/locale/fr_FR/Ess_M2ePro.csv                           app/locale/fr_FR/Ess_M2ePro.csv

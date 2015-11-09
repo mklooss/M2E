@@ -16,6 +16,17 @@ class Ess_M2ePro_Adminhtml_Wizard_InstallationEbayController
 
     //#############################################
 
+    public function indexAction()
+    {
+        /* @var $wizardHelper Ess_M2ePro_Helper_Module_Wizard */
+        $wizardHelper = Mage::helper('M2ePro/Module_Wizard');
+        $wizardHelper->setStatus(
+            'ebayProductDetails', Ess_M2ePro_Helper_Module_Wizard::STATUS_SKIPPED
+        );
+
+        parent::indexAction();
+    }
+
     public function installationAction()
     {
         /* @var $wizardHelper Ess_M2ePro_Helper_Module_Wizard */

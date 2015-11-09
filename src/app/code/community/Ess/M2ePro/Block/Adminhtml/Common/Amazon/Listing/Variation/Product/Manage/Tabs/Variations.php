@@ -8,6 +8,9 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_Variation_Product_Manage_
     extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
     protected $listingProductId;
+
+    // ####################################
+
     /**
      * @param mixed $listingProductId
      * @return $this

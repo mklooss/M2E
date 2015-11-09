@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Order_Log_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -44,7 +46,7 @@ class Ess_M2ePro_Block_Adminhtml_Order_Log_Grid extends Mage_Adminhtml_Block_Wid
         );
 
         $orderId = $this->getRequest()->getParam('order_id');
-        if ($orderId && !$this->getRequest()->isAjax()) {
+        if ($orderId && !$this->getRequest()->isXmlHttpRequest()) {
             $collection->addFieldToFilter('main_table.order_id', (int)$orderId);
 
             /** @var Ess_M2ePro_Model_Order $order */
@@ -88,6 +90,15 @@ class Ess_M2ePro_Block_Adminhtml_Order_Log_Grid extends Mage_Adminhtml_Block_Wid
             'filter_index' => 'main_table.create_date'
         ));
 
+        $this->addColumn('magento_order_number', array(
+            'header'    => Mage::helper('M2ePro')->__('Magento Order #'),
+            'align'     => 'left',
+            'width'     => '150px',
+            'index'     => 'so.increment_id',
+            'sortable'      => false,
+            'frame_callback' => array($this, 'callbackColumnMagentoOrderNumber')
+        ));
+
         $this->addColumn('channel_order_id', array(
             'header'    => Mage::helper('M2ePro')->__('Order #'),
             'align'     => 'left',
@@ -96,15 +107,6 @@ class Ess_M2ePro_Block_Adminhtml_Order_Log_Grid extends Mage_Adminhtml_Block_Wid
             'index'     => 'channel_order_id',
             'frame_callback' => array($this, 'callbackColumnChannelOrderId'),
             'filter_condition_callback' => array($this, 'callbackFilterChannelOrderId')
-        ));
-
-        $this->addColumn('magento_order_number', array(
-            'header'    => Mage::helper('M2ePro')->__('Magento Order #'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'index'     => 'so.increment_id',
-            'sortable'      => false,
-            'frame_callback' => array($this, 'callbackColumnMagentoOrderNumber')
         ));
 
         $this->addColumn('message', array(
@@ -295,4 +297,6 @@ class Ess_M2ePro_Block_Adminhtml_Order_Log_Grid extends Mage_Adminhtml_Block_Wid
             'channel' => $this->getRequest()->getParam('channel')
         ));
     }
+
+    // ####################################
 }

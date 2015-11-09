@@ -83,20 +83,10 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing_Product_Variation_Manage
 
     //##############################################################
 
-    public function getComponentLabel()
+    public function getComponentTitle()
     {
-        $label = '';
-
-        switch($this->getComponent()) {
-        case Ess_M2ePro_Helper_Component_Amazon::NICK:
-            $label = 'Amazon';
-            break;
-        case Ess_M2ePro_Helper_Component_Buy::NICK:
-            $label = 'Rakuten.com';
-            break;
-        }
-
-        return $label;
+        $component = $this->getComponent();
+        return Mage::helper('M2ePro/Component_' . ucfirst($component))->getChannelTitle();
     }
 
     //##############################################################

@@ -119,6 +119,17 @@ HTML;
         $tabsContainer->setDestElementId($this->tabsContainerId);
 
         foreach ($this->tabs as $tabId) {
+
+            if ($tabId == self::TAB_ID_AMAZON && !Mage::helper('M2ePro/View_Common')
+                    ->is3rdPartyShouldBeShown(Ess_M2ePro_Helper_Component_Amazon::NICK)) {
+                continue;
+            }
+
+            if ($tabId == self::TAB_ID_BUY &&
+                !Mage::helper('M2ePro/View_Common')->is3rdPartyShouldBeShown(Ess_M2ePro_Helper_Component_Buy::NICK)) {
+                continue;
+            }
+
             $tab = $this->prepareTabById($tabId);
             $tabsContainer->addTab($tabId, $tab);
         }
@@ -136,7 +147,7 @@ HTML;
 
         return $javascriptsMain .
                $helpBlock->toHtml() . <<<HTML
-<div class="content-header">
+<div class="content-header skip-header">
     <table cellspacing="0">
         <tr>
             <td{$hideChannels}>{$tabsContainer->toHtml()}</td>

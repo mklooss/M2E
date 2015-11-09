@@ -62,7 +62,7 @@ final class Ess_M2ePro_Model_Amazon_Synchronization_Defaults_UpdateListingsProdu
             return $currentLastTime;
         }
 
-        $otherListingsLastTime = $this->getConfigValue('/amazon/other_listings/', 'last_time');
+        $otherListingsLastTime = $this->getConfigValue('/amazon/other_listings/update/', 'last_time');
 
         if (empty($otherListingsLastTime)) {
             return null;

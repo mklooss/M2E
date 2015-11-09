@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Type_List_Linking
 {
-    // ########################################
-
     /** @var Ess_M2ePro_Model_Listing_Product $listingProduct */
     private $listingProduct = null;
 
@@ -27,6 +25,12 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Type_List_Linking
 
     public function setGeneralId($generalId)
     {
+        if (!Mage::helper('M2ePro/Component_Amazon')->isASIN($generalId) &&
+            !Mage::helper('M2ePro')->isISBN10($generalId)
+        ) {
+            throw new InvalidArgumentException('General ID is invalid.');
+        }
+
         $this->generalId = $generalId;
         return $this;
     }
@@ -260,18 +264,16 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Type_List_Linking
     private function getDataFromAmazon()
     {
         $params = array(
-            'item'    => $this->generalId,
-            'id_type' => Mage::helper('M2ePro')->isISBN($this->generalId) ? 'ISBN' : 'ASIN',
+            'item' => $this->generalId,
             'variation_child_modification' => 'none',
         );
 
         $dispatcherObject = Mage::getModel('M2ePro/Connector_Amazon_Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('product', 'search', 'byIdentifier',
-                                                               $params, 'items',
+        $connectorObj = $dispatcherObject->getVirtualConnector('product', 'search', 'byAsin',
+                                                               $params, 'item',
                                                                $this->getListingProduct()->getListing()->getAccount());
 
-        $result = $dispatcherObject->process($connectorObj);
-        return !empty($result) ? reset($result) : array();
+        return $dispatcherObject->process($connectorObj);
     }
 
     // ########################################

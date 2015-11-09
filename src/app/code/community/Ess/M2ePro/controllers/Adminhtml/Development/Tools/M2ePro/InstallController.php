@@ -524,7 +524,8 @@ HTML;
         $connWrite->update(
             Mage::getSingleton('core/resource')->getTableName('m2epro_wizard'),
             array('status' => 0, 'step' => null),
-            '`nick` <> \'migrationToV6\' AND `nick` <> \'migrationNewAmazon\' AND `nick` <> \'removedPlay\''
+            '`nick` <> \'migrationToV6\' AND `nick` <> \'migrationNewAmazon\'
+              AND `nick` <> \'removedPay\' AND `nick` <> \'ebayProductDetails\''
         );
 
         Mage::helper('M2ePro/Magento')->clearCache();

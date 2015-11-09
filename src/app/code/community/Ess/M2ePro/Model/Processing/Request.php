@@ -15,8 +15,6 @@ class Ess_M2ePro_Model_Processing_Request extends Ess_M2ePro_Model_Abstract
 
     const MAX_LIFE_TIME_INTERVAL = 86400; // 1 day
 
-    //####################################
-
     /** @var Ess_M2ePro_Model_Connector_ResponserRunner $responserRunner */
     private $responserRunner = null;
 

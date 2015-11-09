@@ -771,7 +771,7 @@ class Ess_M2ePro_Adminhtml_Ebay_AccountController extends Ess_M2ePro_Controller_
         }
 
         if ($i == 10) {
-            throw new Exception();
+            throw new Exception('Account title cannot be generated');
         }
 
         return $accountTitle;

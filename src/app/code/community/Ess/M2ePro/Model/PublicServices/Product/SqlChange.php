@@ -1,15 +1,30 @@
 <?php
 
 /*
- * @copyright  Copyright (c) 2015 by  ESS-UA.
- *
+ * @copyright  Copyright (c) 2013 by  ESS-UA.
+ */
+
+/*
     $model = Mage::getModel('M2ePro/PublicServices_Product_SqlChange');
 
-    $model->markProductAttributeChanged(17, 'custom_attribute', 1);
+    // notify M2E Pro about some change of product with ID 17
+    $model->markProductChanged(17);
+
+    // make price change of product with ID 18 and then notify M2E Pro
     $model->markPriceWasChanged(18);
 
+    // make QTY change of product with ID 19 and then notify M2E Pro
+    $model->markQtyWasChanged(19);
+
+    // make status change of product with ID 20 and then notify M2E Pro
+    $model->markStatusWasChanged(20);
+
+    // make attribute 'custom_attribute_code' value change from 'old' to 'new' of product with ID 21
+    // in store with ID 1 and then notify M2E Pro
+    $model->markProductAttributeChanged(21, 'custom_attribute_code', 1, 'old', 'new');
+
     $model->applyChanges();
- */
+*/
 
 class Ess_M2ePro_Model_PublicServices_Product_SqlChange
 {

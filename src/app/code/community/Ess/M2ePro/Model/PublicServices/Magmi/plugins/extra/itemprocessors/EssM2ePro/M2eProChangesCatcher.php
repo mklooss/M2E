@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * @copyright  Copyright (c) 2013 by  ESS-UA.
+ */
+
 class M2eProChangesCatcher extends Magmi_ItemProcessor
 {
     const CHANGE_UPDATE_ATTRIBUTE_CODE = '__INSTANCE__';
@@ -7,6 +11,12 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
     const CHANGE_INITIATOR_DEVELOPER   = 4;
 
     protected $changes = array();
+
+    protected $statistics = array(
+        'not_presented' => 0,
+        'existed'       => 0,
+        'inserted'      => 0
+    );
 
     // ########################################
 
@@ -17,8 +27,8 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
         return array(
             "name"    => "Ess M2ePro Product Changes Inspector",
             "author"  => "ESS",
-            "version" => "1.0.0.1",
-            "url"     => "" //todo doc
+            "version" => "1.0.3",
+            "url"     => "http://docs.m2epro.com/display/BestPractice/Plugin+for+Magmi+Import+Tool"
         );
     }
 
@@ -42,19 +52,20 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
 
     public function afterImport()
     {
-        $result = parent::afterImport();
-
         $this->filterOnlyAffectedChanges();
         $this->insertChanges();
 
-        return $result;
+        return parent::afterImport();
     }
 
     // ########################################
 
     private function filterOnlyAffectedChanges()
     {
-        if (count($this->changes) <= 0) {
+        $count = count($this->changes);
+        $this->log("Will be checked {$count} products.");
+
+        if ($count <= 0) {
             return;
         }
 
@@ -78,6 +89,7 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
         foreach ($this->changes as $key => $change) {
 
             if (!in_array($change['product_id'], $productsInListings)) {
+                $this->statistics['not_presented']++;
                 unset($this->changes[$key]);
             }
         }
@@ -86,17 +98,26 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
     private function insertChanges()
     {
         if (count($this->changes) <= 0) {
+            $this->log('The updated products are not presented in the M2e Pro Listings.');
             return;
         }
 
         $tableName = $this->tablename('m2epro_product_change');
-        $stmt = $this->select("SELECT *
-                               FROM `{$tableName}`
-                               WHERE `product_id` IN (?)", array_keys($this->changes));
 
         $existedChanges = array();
-        while ($row = $stmt->fetch()) {
-            $existedChanges[] = $row['product_id'].'##'.$row['attribute'];
+        foreach (array_chunk($this->changes, 500, true) as $productChangesPart) {
+
+            if (count($productChangesPart) <= 0) {
+                continue;
+            }
+
+            $stmt = $this->select("SELECT *
+                           FROM `{$tableName}`
+                           WHERE `product_id` IN (?)", implode(',', array_keys($productChangesPart)));
+
+            while ($row = $stmt->fetch()) {
+                $existedChanges[] = $row['product_id'].'##'.$row['attribute'];
+            }
         }
 
         $insertSql = "INSERT INTO `{$tableName}`
@@ -106,9 +127,11 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
         foreach ($this->changes as $productId => $change) {
 
             if (in_array($change['product_id'].'##'.$change['attribute'], $existedChanges)) {
+                $this->statistics['existed']++;
                 continue;
             }
 
+            $this->statistics['inserted']++;
             $this->insert($insertSql, array($change['product_id'],
                                             $change['action'],
                                             $change['attribute'],
@@ -116,6 +139,29 @@ class M2eProChangesCatcher extends Magmi_ItemProcessor
                                             $change['update_date'],
                                             $change['create_date']));
         }
+
+        $this->saveStatistics();
+    }
+
+    // ########################################
+
+    protected function resetStatistics()
+    {
+        $this->statistics = array(
+            'not_presented' => 0,
+            'existed'       => 0,
+            'inserted'      => 0
+        );
+    }
+
+    protected function saveStatistics()
+    {
+        $message  = "Not presented (skipped): {$this->statistics['not_presented']}## ";
+        $message .= "Existed (skipped): {$this->statistics['existed']}## ";
+        $message .= "Processed: {$this->statistics['inserted']}.";
+
+        $this->log($message);
+        $this->resetStatistics();
     }
 
     // ########################################

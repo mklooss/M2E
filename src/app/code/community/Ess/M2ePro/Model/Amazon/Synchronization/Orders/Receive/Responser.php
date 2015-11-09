@@ -7,8 +7,6 @@
 class Ess_M2ePro_Model_Amazon_Synchronization_Orders_Receive_Responser
     extends Ess_M2ePro_Model_Connector_Amazon_Orders_Get_ItemsResponser
 {
-    // ##########################################################
-
     protected $synchronizationLog = NULL;
 
     // ##########################################################

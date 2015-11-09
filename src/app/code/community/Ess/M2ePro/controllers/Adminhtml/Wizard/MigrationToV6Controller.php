@@ -155,8 +155,8 @@ class Ess_M2ePro_Adminhtml_Wizard_MigrationToV6Controller
 
         $coefficientIds = array(
             'start_price_coefficient',
-            'buyitnow_price_coefficient',
-            'reserve_price_coefficient'
+            'reserve_price_coefficient',
+            'buyitnow_price_coefficient'
         );
 
         $this->saveSellingFormatData($data, $coefficientIds, 'm2epro_ebay_template_selling_format');

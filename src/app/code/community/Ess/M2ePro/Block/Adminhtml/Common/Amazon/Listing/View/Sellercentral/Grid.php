@@ -7,6 +7,8 @@
 class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
     extends Ess_M2ePro_Block_Adminhtml_Magento_Product_Grid_Abstract
 {
+    // ####################################
+
     /** @var $sellingFormatTemplate Ess_M2ePro_Model_Amazon_Template_SellingFormat */
     private $sellingFormatTemplate = NULL;
 
@@ -58,7 +60,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
 
         // Get collection
         //----------------------------
-        /* @var $collection Mage_Core_Model_Mysql4_Collection_Abstract */
+        /* @var $collection Ess_M2ePro_Model_Mysql4_Magento_Product_Collection */
         $collection = Mage::getConfig()->getModelInstance('Ess_M2ePro_Model_Mysql4_Magento_Product_Collection',
             Mage::getModel('catalog/product')->getResource());
         $collection
@@ -68,8 +70,10 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
             ->joinTable(
                 array('cisi' => 'cataloginventory/stock_item'),
                 'product_id=entity_id',
-                array('qty' => 'qty',
-                    'is_in_stock' => 'is_in_stock'),
+                array(
+                    'qty' => 'qty',
+                    'is_in_stock' => 'is_in_stock'
+                ),
                 '{{table}}.stock_id=1',
                 'left'
             );
@@ -103,7 +107,13 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
                 'amazon_sku'                    => 'sku',
                 'online_qty'                    => 'online_qty',
                 'online_price'                  => 'online_price',
-                'online_sale_price'             => 'online_sale_price',
+                'online_sale_price'             => 'IF(
+                  `alp`.`online_sale_price_start_date` IS NOT NULL AND
+                  `alp`.`online_sale_price_end_date` IS NOT NULL AND
+                  `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
+                  `alp`.`online_sale_price`,
+                  NULL
+                )',
                 'online_sale_price_start_date'  => 'online_sale_price_start_date',
                 'online_sale_price_end_date'    => 'online_sale_price_end_date',
                 'is_afn_channel'                => 'is_afn_channel',
@@ -111,23 +121,20 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
                 'variation_child_statuses'      => 'variation_child_statuses',
                 'is_variation_parent'           => 'is_variation_parent',
                 'variation_parent_id'           => 'variation_parent_id',
-                'defected_messages'             => 'defected_messages'
+                'defected_messages'             => 'defected_messages',
+                'min_online_price'                     => 'IF(
+                    `alp`.`online_sale_price_start_date` IS NOT NULL AND
+                    `alp`.`online_sale_price_end_date` IS NOT NULL AND
+                    `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
+                    `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
+                    `alp`.`online_sale_price`,
+                    `alp`.`online_price`
+                )'
             ),
             '{{table}}.is_variation_parent = 0'
         );
         //----------------------------
 //        exit($collection->getSelect()->__toString());
-
-        // Change default Magento message when items count is zero
-        $collectionForCounting = clone $collection;
-
-        if (count($collectionForCounting) === 0) {
-            $this->setEmptyText(
-                Mage::helper('M2ePro')->__(
-                    'Only Simple and Child Products listed on Amazon will be shown in Seller Сentral View Mode.'
-                )
-            );
-        }
 
         // Set collection to grid
         $this->setCollection($collection);
@@ -193,8 +200,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
-            'index' => 'online_price',
-            'filter_index' => 'online_price',
+            'index' => 'min_online_price',
+            'filter_index' => 'min_online_price',
             'frame_callback' => array($this, 'callbackColumnPrice'),
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         ));
@@ -378,7 +385,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
             foreach ($productOptions as $attribute => $option) {
                 !$option && $option = '--';
                 $value .= '<b>' . Mage::helper('M2ePro')->escapeHtml($attribute) .
-                    '</b>:&nbsp;' . Mage::helper('M2ePro')->escapeHtml($option) . '</br>';
+                    '</b>:&nbsp;' . Mage::helper('M2ePro')->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
 
@@ -388,7 +395,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_View_Sellercentral_Grid
             foreach ($channelOptions as $attribute => $option) {
                 !$option && $option = '--';
                 $value .= '<b>' . Mage::helper('M2ePro')->escapeHtml($attribute) .
-                    '</b>:&nbsp;' . Mage::helper('M2ePro')->escapeHtml($option) . '</br>';
+                    '</b>:&nbsp;' . Mage::helper('M2ePro')->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
 
@@ -463,11 +470,11 @@ HTML;
         $parentAsinHtml = '';
         $variationParentId = $row->getData('variation_parent_id');
         if(!empty($variationParentId)){
-            $parentAsinHtml = '<br><span style="display: block;
+            $parentAsinHtml = '<br/><span style="display: block;
                                                 margin-bottom: 5px;
                                                 font-size: 10px;
                                                 color: grey;">'.
-                Mage::helper('M2ePro')->__('child ASIN/ISBN</br>of parent %parent_asin%',
+                Mage::helper('M2ePro')->__('child ASIN/ISBN<br/>of parent %parent_asin%',
                     $this->getParentAsin($row->getData('id'))) . '</span>';
         }
 
@@ -516,7 +523,9 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        $onlinePrice = $row->getData('online_price');
+
+        if (is_null($onlinePrice) || $onlinePrice === '') {
             if ($row->getData('amazon_status') == Ess_M2ePro_Model_Listing_Product::STATUS_NOT_LISTED) {
                 return Mage::helper('M2ePro')->__('N/A');
             } else {
@@ -530,10 +539,10 @@ HTML;
             ->getChildObject()
             ->getDefaultCurrency();
 
-        if ((float)$value <= 0) {
+        if ((float)$onlinePrice <= 0) {
             $priceValue = '<span style="color: #f00;">0</span>';
         } else {
-            $priceValue = Mage::app()->getLocale()->currency($currency)->toCurrency($value);
+            $priceValue = Mage::app()->getLocale()->currency($currency)->toCurrency($onlinePrice);
         }
 
         $resultHtml = '';
@@ -545,9 +554,9 @@ HTML;
             $startDateTimestamp = strtotime($row->getData('online_sale_price_start_date'));
             $endDateTimestamp   = strtotime($row->getData('online_sale_price_end_date'));
 
-            if ($currentTimestamp < $endDateTimestamp) {
-                $iconHelpPath = $this->getSkinUrl('M2ePro/images/help.png');
-                $toolTipIconPath = $this->getSkinUrl('M2ePro/images/tool-tip-icon.png');
+            if ($currentTimestamp <= $endDateTimestamp) {
+                $iconHelpPath = $this->getSkinUrl('M2ePro/images/i_logo.png');
+                $toolTipIconPath = $this->getSkinUrl('M2ePro/images/i_icon.png');
 
                 $dateFormat = Mage::app()->getLocale()->getDateFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM);
 
@@ -560,8 +569,10 @@ HTML;
 
                 $intervalHtml = '<img class="tool-tip-image"
                                  style="vertical-align: middle;"
-                                 src="'.$toolTipIconPath.'">
-                            <span class="tool-tip-message" style="display:none; text-align: left; width: 110px;">
+                                 src="'.$toolTipIconPath.'"><span class="tool-tip-message" style="display:none;
+                                                                  text-align: left;
+                                                                  width: 120px;
+                                                                  background: #E3E3E3;">
                                 <img src="'.$iconHelpPath.'">
                                 <span style="color:gray;">
                                     <strong>From:</strong> '.$fromDate.'<br/>
@@ -573,13 +584,14 @@ HTML;
 
                 if ($currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&
-                    $salePrice < (float)$value
+                    $salePrice < (float)$onlinePrice
                 ) {
                     $resultHtml .= '<span style="color: grey; text-decoration: line-through;">'.$priceValue.'</span>';
-                    $resultHtml .= '<br/>'.$intervalHtml.$salePriceValue;
+                    $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.$salePriceValue;
                 } else {
                     $resultHtml .= $priceValue;
-                    $resultHtml .= '<br/>'.$intervalHtml.'<span style="color:gray;">'.$salePriceValue.'</span>';
+                    $resultHtml .= '<br/>'.$intervalHtml.
+                        '<span style="color:gray;">'.'&nbsp;'.$salePriceValue.'</span>';
                 }
             }
         }
@@ -700,22 +712,19 @@ HTML;
             return;
         }
 
-        $from = $value['from'];
-        $to   = $value['to'];
+        $condition = '';
 
-        $collection->getSelect()->where(
-            '(alp.online_price >= \''.$from.'\' AND alp.online_price <= \''.$to.'\' AND
-            (
-                alp.online_sale_price IS NULL OR
-                alp.online_sale_price_start_date > NOW() OR
-                alp.online_sale_price_end_date < NOW()
-            )) OR (alp.online_sale_price >= \''.$from.'\' AND alp.online_sale_price <= \''.$to.'\' AND
-            (
-                alp.online_sale_price IS NOT NULL AND
-                alp.online_sale_price_start_date < NOW() AND
-                alp.online_sale_price_end_date > NOW()
-            ))'
-        );
+        if (!empty($value['from'])) {
+            $condition = 'min_online_price >= \''.$value['from'].'\'';
+        }
+        if (!empty($value['to'])) {
+            if (!empty($value['from'])) {
+                $condition .= ' AND ';
+            }
+            $condition .= 'min_online_price <= \''.$value['to'].'\'';
+        }
+
+        $collection->getSelect()->having($condition);
     }
 
     //----------------------------------------
@@ -845,8 +854,8 @@ HTML;
             case Ess_M2ePro_Model_Listing_Log::ACTION_DELETE_AND_REMOVE_PRODUCT:
                 $string = Mage::helper('M2ePro')->__('Remove from Channel & Listing');
                 break;
-            case Ess_M2ePro_Model_Listing_Log::ACTION_CHANGE_STATUS_ON_CHANNEL:
-                $string = Mage::helper('M2ePro')->__('Status Change');
+            case Ess_M2ePro_Model_Listing_Log::ACTION_CHANNEL_CHANGE:
+                $string = Mage::helper('M2ePro')->__('Channel Change');
                 break;
         }
 
@@ -928,6 +937,13 @@ HTML;
 JAVASCRIPT;
 
         return parent::_toHtml().$javascriptsMain;
+    }
+
+    public function getEmptyText()
+    {
+        return Mage::helper('M2ePro')->__(
+            'Only Simple and Child Products listed on Amazon will be shown in Seller Сentral View Mode.'
+        );
     }
 
     // ####################################

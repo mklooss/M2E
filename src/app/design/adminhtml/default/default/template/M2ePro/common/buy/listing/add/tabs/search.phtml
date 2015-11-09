@@ -39,7 +39,7 @@
     //-----------------------------
     Event.observe(window, 'load', function() {
 
-        BuyListingChannelSettingsHandlerObj = new BuyListingChannelSettingsHandler();
+        BuyListingChannelSettingsHandlerObj = new CommonBuyListingChannelSettingsHandler();
         BuyListingChannelSettingsHandlerObj.setConstants('<?php echo Mage::helper('M2ePro')->getClassConstantAsJson('Ess_M2ePro_Model_Buy_Listing'); ?>');
 
         $('general_id_mode').observe('change', BuyListingChannelSettingsHandlerObj.general_id_mode_change);

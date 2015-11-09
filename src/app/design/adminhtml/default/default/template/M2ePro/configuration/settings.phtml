@@ -11,7 +11,7 @@
     Event.observe(window, 'load', function() {
         SettingsHandlerObj = new ConfigurationSettingsHandler();
 
-        ControlPanelHandlerObj = new ControlPanelHandler();
+        ControlPanelHandlerObj = new DevelopmentControlPanelHandler();
 
         //------------------------------
 
@@ -180,10 +180,19 @@
             <div class="hor-scroll">
 
                 <div id="block_notice_configuration_advanced_settings" class="block_notices_module no-icon" title="<?php echo Mage::helper('M2ePro')->__('Global Synchronization'); ?>">
-                    <?php echo Mage::helper('M2ePro')->__(
-                        'If you change Product Price or Quantity via direct Database access (eg using Import/Export Tools or Custom scripts), enable this Option.<br/><br/>
-                        <b>Warning:</b> Tracking direct Database changes is resource-intensive and may affect the Performance of your Magento Site and Synchronization with Channels.
-                        Only choose \'Yes\' if you are certain you need this functionality.'
+                    <?php echo Mage::helper('M2ePro')->__('
+                    If you change Product Price or Quantity via direct Database access (eg using Import/Export Tools or
+                    Custom scripts), use <a href="%url1%" target="_blank">M2E Pro Models</a> or
+                    <a href="%url2%" target="_blank">Magmi Plugin</a>.<br/><br/>
+
+                    Only in case you cannot use these features, enable an additional feature for global synchronization
+                    - Track Direct Database Changes.<br/><br/>
+
+                    <strong>Warning:</strong> Tracking direct Database changes is resource-intensive and may affect the
+                    Performance of your Magento Site and Synchronization with Channels. Choose \'Yes\' only if you cannot
+                    use another predefined M2E Pro Models and you are totally sure that you need this functionality.',
+                    Mage::helper('M2ePro/Module_Support')->getDocumentationUrl(NULL, 'BestPractice/Programmatic+Possibilities+to+work+with+Extension'),
+                    Mage::helper('M2ePro/Module_Support')->getDocumentationUrl(NULL, 'BestPractice/Plugin+for+Magmi+Import+Tool')
                     ); ?>
                 </div>
 

@@ -30,11 +30,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Rakuten_Marketplace_Form extends Mage_Ad
         $marketplaces[Ess_M2ePro_Helper_Component_Buy::NICK] = Mage::helper('M2ePro/Component_Buy')
                                                                         ->getCollection('Marketplace')->getFirstItem();
 
-        $activeWizard = $this->getActiveWizard();
-        if (!is_null($activeWizard)) {
-            $marketplaces = array($activeWizard => $marketplaces[$activeWizard]);
-        }
-
         $groups = array();
         $storedStatuses = array();
         $previewGroup = '';

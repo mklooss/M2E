@@ -139,66 +139,6 @@ abstract class Ess_M2ePro_Block_Adminhtml_Synchronization_Log_Grid extends Ess_M
 
     // ####################################
 
-    public function callbackDescription($value, $row, $column, $isExport)
-    {
-        $fullDescription = Mage::getModel('M2ePro/Log_Abstract')->decodeDescription($row->getData('description'));
-        $row->setData('description', $fullDescription);
-
-        $value = $column->getRenderer()->render($row);
-
-        preg_match_all('/href="([^"]*)"/', $fullDescription, $matches);
-
-        if (!count($matches[0])) {
-            return $this->prepareLongText($fullDescription, $value);
-        }
-
-        foreach ($matches[1] as $key => $href) {
-
-            preg_match_all('/route:([^;]*)/', $href, $routeMatch);
-            preg_match_all('/back:([^;]*)/', $href, $backMatch);
-            preg_match_all('/filter:([^;]*)/', $href, $filterMatch);
-            preg_match_all('/channel:([^;]*)/', $href, $channelMatch);
-
-            if (count($routeMatch[1]) == 0) {
-                $fullDescription = str_replace($matches[0][$key], '', $fullDescription);
-                $value = str_replace($matches[0][$key], '', $value);
-
-                continue;
-            }
-
-            $params = array();
-            if (count($backMatch[1]) > 0) {
-                $params['back'] = Mage::helper('M2ePro')->makeBackUrlParam($backMatch[1][$key]);
-            }
-            if (count($filterMatch[1]) > 0) {
-                $params['filter'] = base64_encode($filterMatch[1][$key]);
-            }
-            if (count($channelMatch[1]) > 0) {
-                $params['channel'] = $channelMatch[1][$key];
-            }
-
-            $url = $routeMatch[1][$key];
-            $fullDescription = str_replace($href, $this->getUrl($url, $params), $fullDescription);
-            $value = str_replace($href, $this->getUrl($url, $params), $value);
-        }
-
-        return $this->prepareLongText($fullDescription, $value);
-    }
-
-    protected function prepareLongText($fullText, $renderedText)
-    {
-        if (strlen($fullText) == strlen($renderedText)) {
-            return $renderedText;
-        }
-
-        $renderedText .= '&nbsp;(<a href="javascript:void(0)" onclick="LogHandlerObj.showFullText(this);">more</a>)
-                          <div style="display: none;"><br/>'.$fullText.'<br/><br/></div>';
-
-        return $renderedText;
-    }
-
-    // ####################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/*/synchronizationGrid', array(

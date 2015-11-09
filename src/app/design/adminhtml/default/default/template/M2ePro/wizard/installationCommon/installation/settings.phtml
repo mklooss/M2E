@@ -20,6 +20,8 @@
 
         ComponentsHandlerObj = new ConfigurationComponentsHandler();
 
+        ComponentsHandlerObj.componentsTitles = <?php echo json_encode(Mage::helper('M2ePro/View_Common_Component')->getComponentsTitles()); ?>
+
         $('component_amazon_mode').observe('change', ComponentsHandlerObj.component_mode_change);
         $('component_buy_mode').observe('change', ComponentsHandlerObj.component_mode_change);
 

@@ -44,7 +44,7 @@ class Ess_M2ePro_Block_Adminhtml_Development_Inspection_OtherIssues
 
     public function isZendOpcacheAvailable()
     {
-        return function_exists('opcache_get_status');
+        return Mage::helper('M2ePro/Client_Cache')->isZendOpcacheAvailable();
     }
 
     // ########################################

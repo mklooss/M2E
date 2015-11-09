@@ -10,6 +10,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing_Add_Tabs_Selling extends Mage_Ad
     protected $component = null;
     protected $listing = null;
 
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -135,4 +137,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing_Add_Tabs_Selling extends Mage_Ad
 
         return $this->listing;
     }
+
+    // ####################################
 }

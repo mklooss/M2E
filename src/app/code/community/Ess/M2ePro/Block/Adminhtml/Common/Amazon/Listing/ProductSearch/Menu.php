@@ -9,6 +9,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_ProductSearch_Menu
 {
     protected $listingProductId;
 
+    // ####################################
+
     /**
      * @param mixed $listingProductId
      * @return $this
@@ -86,4 +88,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_ProductSearch_Menu
 
         parent::_beforeToHtml();
     }
+
+    // ####################################
 }

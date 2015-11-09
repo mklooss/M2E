@@ -9,6 +9,8 @@ class Ess_M2ePro_Block_Adminhtml_Order_Item_Product_Options_Mapping extends Ess_
     /** @var $magentoProduct Ess_M2ePro_Model_Magento_Product */
     private $magentoProduct = null;
 
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -159,4 +161,6 @@ class Ess_M2ePro_Block_Adminhtml_Order_Item_Product_Options_Mapping extends Ess_
 
         parent::_beforeToHtml();
     }
+
+    // ####################################
 }

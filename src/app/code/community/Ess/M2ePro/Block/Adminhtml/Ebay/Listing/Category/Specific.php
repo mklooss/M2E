@@ -2,8 +2,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Category_Specific extends Mage_Adminhtml_Block_Widget
 {
-    // ########################################
-
     protected $_marketplaceId = null;
     protected $_categoryMode = null;
     protected $_categoryValue = null;
@@ -218,9 +216,11 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Category_Specific extends Mage_Adm
             return array();
         }
 
-        return Mage::helper('M2ePro/Component_Ebay_Category_Ebay')->getSpecifics(
+        $specifics = Mage::helper('M2ePro/Component_Ebay_Category_Ebay')->getSpecifics(
             $this->getCategoryValue(), $this->getMarketplaceId()
         );
+
+        return is_null($specifics) ? array() : $specifics;
     }
 
     public function getEbaySelectedSpecifics()
@@ -238,6 +238,34 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Category_Specific extends Mage_Adm
     }
 
     // ----------------------------------------
+
+    public function getRequiredDetailsFields()
+    {
+        $features = Mage::helper('M2ePro/Component_Ebay_Category_Ebay')->getFeatures(
+            $this->getCategoryValue(), $this->getMarketplaceId()
+        );
+
+        if (empty($features)) {
+            return array();
+        }
+
+        $statusRequired = Ess_M2ePro_Helper_Component_Ebay_Category_Ebay::PRODUCT_IDENTIFIER_STATUS_REQUIRED;
+
+        $requiredFields = array();
+        foreach (array('ean','upc','isbn') as $identifier) {
+
+            $key = $identifier.'_enabled';
+            if (!isset($features[$key]) || $features[$key] != $statusRequired) {
+                continue;
+            }
+
+            $requiredFields[] = strtoupper($identifier);
+        }
+
+        return $requiredFields;
+    }
+
+    // ########################################
 
     protected function filterSelectedSpecificsByMode($mode)
     {

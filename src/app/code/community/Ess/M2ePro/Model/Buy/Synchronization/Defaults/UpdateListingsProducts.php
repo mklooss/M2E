@@ -62,7 +62,7 @@ final class Ess_M2ePro_Model_Buy_Synchronization_Defaults_UpdateListingsProducts
             return $currentLastTime;
         }
 
-        $otherListingsLastTime = $this->getConfigValue('/buy/other_listings/', 'last_time');
+        $otherListingsLastTime = $this->getConfigValue('/buy/other_listings/update/', 'last_time');
 
         if (empty($otherListingsLastTime)) {
             return null;

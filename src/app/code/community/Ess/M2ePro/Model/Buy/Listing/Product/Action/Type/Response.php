@@ -263,7 +263,7 @@ abstract class Ess_M2ePro_Model_Buy_Listing_Product_Action_Type_Response
 
     protected function setLastSynchronizationDates()
     {
-        if (!$this->getConfigurator()->isSelling()) {
+        if (!$this->getConfigurator()->isSellingAllowed()) {
             return;
         }
 

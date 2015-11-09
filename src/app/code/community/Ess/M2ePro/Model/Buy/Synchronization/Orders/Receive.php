@@ -7,8 +7,6 @@
 final class Ess_M2ePro_Model_Buy_Synchronization_Orders_Receive
     extends Ess_M2ePro_Model_Buy_Synchronization_Orders_Abstract
 {
-    // ##########################################################
-
     const LOCK_ITEM_PREFIX = 'synchronization_buy_orders_receive';
 
     // ##########################################################

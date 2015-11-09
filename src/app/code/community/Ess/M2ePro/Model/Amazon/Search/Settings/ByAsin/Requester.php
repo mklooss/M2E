@@ -7,8 +7,6 @@
 class Ess_M2ePro_Model_Amazon_Search_Settings_ByAsin_Requester
     extends Ess_M2ePro_Model_Connector_Amazon_Search_ByAsin_ItemsRequester
 {
-    // ########################################
-
     private $listingProduct = NULL;
 
     // ########################################

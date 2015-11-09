@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Model_Synchronization_OperationHistory extends Ess_M2ePro_Model_OperationHistory
 {
-    //#########################################
-
     private $timePoints = array();
     private $leftPadding = 0;
     private $bufferString = '';

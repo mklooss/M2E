@@ -17,7 +17,19 @@ class Ess_M2ePro_Model_Servicing_Task_Settings extends Ess_M2ePro_Model_Servicin
 
     public function getRequestData()
     {
-        return array();
+        $requestData = array();
+
+        $tempValue = Mage::helper('M2ePro/Module')->getCacheConfig()->getGroupValue('/default_baseurl_index/',
+                                                                                    'given_by_server_at');
+        if ($tempValue) {
+
+            $primaryConfig = Mage::helper('M2ePro/Primary')->getConfig();
+            $requestData['current_default_server_baseurl_index'] = $primaryConfig->getGroupValue(
+                '/server/', 'default_baseurl_index'
+            );
+        }
+
+        return $requestData;
     }
 
     public function processResponseData(array $data)
@@ -88,8 +100,13 @@ class Ess_M2ePro_Model_Servicing_Task_Settings extends Ess_M2ePro_Model_Servicin
             return;
         }
 
-        Mage::helper('M2ePro/Primary')->getConfig()
-                ->setGroupValue('/server/','default_baseurl_index',(int)$data['default_server_baseurl_index']);
+        Mage::helper('M2ePro/Primary')->getConfig()->setGroupValue(
+            '/server/','default_baseurl_index',(int)$data['default_server_baseurl_index']
+        );
+
+        Mage::helper('M2ePro/Module')->getCacheConfig()->setGroupValue(
+            '/default_baseurl_index/', 'given_by_server_at', Mage::helper('M2ePro')->getCurrentGmtDate()
+        );
     }
 
     private function updateLastVersion(array $data)

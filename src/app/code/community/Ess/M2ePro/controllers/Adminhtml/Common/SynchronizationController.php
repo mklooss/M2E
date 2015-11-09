@@ -30,28 +30,22 @@ class Ess_M2ePro_Adminhtml_Common_SynchronizationController
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/configuration/synchronization');
+        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/configuration');
     }
 
     //#############################################
 
     public function indexAction()
     {
-        if ((bool)$this->getRequest()->getParam('wizard',false)) {
-            $this->_initAction()
-                ->_addContent($this->getLayout()->createBlock('M2ePro/adminhtml_common_synchronization'))
-                ->renderLayout();
-        } else {
-            $this->_initAction()
-                ->_addContent(
-                    $this->getLayout()->createBlock(
-                        'M2ePro/adminhtml_common_configuration', '',
-                        array(
-                            'active_tab' => Ess_M2ePro_Block_Adminhtml_Common_Configuration_Tabs::TAB_ID_SYNCHRONIZATION
-                        )
+        $this->_initAction()
+            ->_addContent(
+                $this->getLayout()->createBlock(
+                    'M2ePro/adminhtml_common_configuration', '',
+                    array(
+                        'active_tab' => Ess_M2ePro_Block_Adminhtml_Common_Configuration_Tabs::TAB_ID_SYNCHRONIZATION
                     )
-                )->renderLayout();
-        }
+                )
+            )->renderLayout();
     }
 
     //#############################################
@@ -68,57 +62,13 @@ class Ess_M2ePro_Adminhtml_Common_SynchronizationController
                     '/amazon/templates/', 'mode',
                     (int)$this->getRequest()->getParam('amazon_templates_mode')
                 );
-                Mage::helper('M2ePro/Module')->getSynchronizationConfig()->setGroupValue(
-                    '/amazon/orders/', 'mode',
-                    (int)$this->getRequest()->getParam('amazon_orders_mode')
-                );
-                Mage::helper('M2ePro/Module')->getSynchronizationConfig()->setGroupValue(
-                    '/amazon/other_listings/', 'mode',
-                    (int)$this->getRequest()->getParam('amazon_other_listings_mode')
-                );
-
             } elseif ($component == Ess_M2ePro_Helper_Component_Buy::NICK) {
 
-                Mage::helper('M2ePro/Module')->getSynchronizationConfig()
-                                             ->setGroupValue('/buy/templates/',
-                                                             'mode',
-                                                             (int)$this->getRequest()->getParam('buy_templates_mode'));
-                Mage::helper('M2ePro/Module')->getSynchronizationConfig()
-                                             ->setGroupValue('/buy/orders/',
-                                                             'mode',
-                                                             (int)$this->getRequest()->getParam('buy_orders_mode'));
-                Mage::helper('M2ePro/Module')->getSynchronizationConfig()
-                                             ->setGroupValue('/buy/other_listings/',
-                                                             'mode',
-                                                             (int)$this->getRequest()
-                                                                        ->getParam('buy_other_listings_mode'));
-
+                Mage::helper('M2ePro/Module')->getSynchronizationConfig()->setGroupValue(
+                    '/buy/templates/', 'mode',
+                    (int)$this->getRequest()->getParam('buy_templates_mode'));
             }
         }
-    }
-
-    public function clearLogAction()
-    {
-        $task = $this->getRequest()->getParam('task');
-        $component = $this->getRequest()->getParam('component');
-
-        if (empty($component)) {
-            $this->_getSession()->addError(Mage::helper('M2ePro')->__('Component can\'be empty'));
-            return $this->_redirect('*/*/index');
-        }
-        if (is_null($task)) {
-            $this->_getSession()->addError(Mage::helper('M2ePro')->__('Please select Item(s) to clear'));
-            return $this->_redirect('*/*/index');
-        }
-
-        Mage::getModel('M2ePro/Synchronization_Log')
-                ->setComponentMode($component)
-                ->clearMessages($task);
-
-        $this->_getSession()->addSuccess(
-            Mage::helper('M2ePro')->__('The Synchronization Task Log has been successfully cleared.')
-        );
-        $this->_redirectUrl(Mage::helper('M2ePro')->getBackUrl('index'));
     }
 
     //#############################################
@@ -135,65 +85,6 @@ class Ess_M2ePro_Adminhtml_Common_SynchronizationController
             Ess_M2ePro_Model_Synchronization_Task::DEFAULTS,
             Ess_M2ePro_Model_Synchronization_Task::TEMPLATES,
             Ess_M2ePro_Model_Synchronization_Task::ORDERS,
-            Ess_M2ePro_Model_Synchronization_Task::OTHER_LISTINGS
-        ));
-
-        $dispatcher->setInitiator(Ess_M2ePro_Helper_Data::INITIATOR_USER);
-        $dispatcher->setParams(array());
-
-        $dispatcher->process();
-    }
-
-    //------------------------
-
-    public function runNowTemplatesAction()
-    {
-        session_write_close();
-
-        /** @var $dispatcher Ess_M2ePro_Model_Synchronization_Dispatcher */
-        $dispatcher = Mage::getModel('M2ePro/Synchronization_Dispatcher');
-
-        $dispatcher->setAllowedComponents(json_decode($this->getRequest()->getParam('components')));
-        $dispatcher->setAllowedTasksTypes(array(
-            Ess_M2ePro_Model_Synchronization_Task::DEFAULTS,
-            Ess_M2ePro_Model_Synchronization_Task::TEMPLATES
-        ));
-
-        $dispatcher->setInitiator(Ess_M2ePro_Helper_Data::INITIATOR_USER);
-        $dispatcher->setParams(array());
-
-        $dispatcher->process();
-    }
-
-    public function runNowOrdersAction()
-    {
-        session_write_close();
-
-        /** @var $dispatcher Ess_M2ePro_Model_Synchronization_Dispatcher */
-        $dispatcher = Mage::getModel('M2ePro/Synchronization_Dispatcher');
-
-        $dispatcher->setAllowedComponents(json_decode($this->getRequest()->getParam('components')));
-        $dispatcher->setAllowedTasksTypes(array(
-            Ess_M2ePro_Model_Synchronization_Task::DEFAULTS,
-            Ess_M2ePro_Model_Synchronization_Task::ORDERS
-        ));
-
-        $dispatcher->setInitiator(Ess_M2ePro_Helper_Data::INITIATOR_USER);
-        $dispatcher->setParams(array());
-
-        $dispatcher->process();
-    }
-
-    public function runNowOtherListingsAction()
-    {
-        session_write_close();
-
-        /** @var $dispatcher Ess_M2ePro_Model_Synchronization_Dispatcher */
-        $dispatcher = Mage::getModel('M2ePro/Synchronization_Dispatcher');
-
-        $dispatcher->setAllowedComponents(json_decode($this->getRequest()->getParam('components')));
-        $dispatcher->setAllowedTasksTypes(array(
-            Ess_M2ePro_Model_Synchronization_Task::DEFAULTS,
             Ess_M2ePro_Model_Synchronization_Task::OTHER_LISTINGS
         ));
 

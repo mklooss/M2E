@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Ebay_ManageListings extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
-    // ########################################
-
     const TAB_ID_LISTING = 'listing';
     const TAB_ID_LISTING_OTHER = 'listing_other';
     const TAB_ID_SEARCH = 'search';
@@ -52,7 +50,9 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_ManageListings extends Ess_M2ePro_Block_Ad
 
         $tabsContainer->addTab(self::TAB_ID_LISTING, $this->prepareListingTab());
 
-        if (Mage::helper('M2ePro/View_Ebay')->isAdvancedMode()) {
+        if (Mage::helper('M2ePro/View_Ebay')->isAdvancedMode() &&
+            Mage::helper('M2ePro/View_Ebay')->is3rdPartyShouldBeShown()) {
+
             $tabsContainer->addTab(self::TAB_ID_LISTING_OTHER, $this->prepareListingOtherTab());
         }
 

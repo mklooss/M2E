@@ -211,7 +211,7 @@ class Ess_M2ePro_Model_Buy_Order_Builder extends Mage_Core_Model_Abstract
         foreach ($this->items as $orderItem) {
             /** @var Ess_M2ePro_Model_Mysql4_Listing_Product_Collection $listingProductCollection */
             $listingProductCollection = Mage::helper('M2ePro/Component_Buy')->getCollection('Listing_Product');
-            $listingProductCollection->join(
+            $listingProductCollection->getSelect()->join(
                 array('l' => Mage::getModel('M2ePro/Listing')->getResource()->getMainTable()),
                 'main_table.listing_id=l.id',
                 array('account_id')
@@ -239,15 +239,14 @@ class Ess_M2ePro_Model_Buy_Order_Builder extends Mage_Core_Model_Abstract
 
                 if ($currentOnlineQty > $orderItem['qty']) {
                     $listingProduct->setData('online_qty', $currentOnlineQty - $orderItem['qty']);
-                    $listingProduct->save();
 
-                    continue;
-                }
-
-                $listingProduct->setData('online_qty', 0);
-
-                if (!$listingProduct->isStopped()) {
-                    $listingProduct->setData('status', Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+                    // M2ePro_TRANSLATIONS
+                    // Item QTY was successfully changed from %from% to %to% .
+                    $tempLogMessage = Mage::helper('M2ePro')->__(
+                        'Item QTY was successfully changed from %from% to %to% .',
+                        $currentOnlineQty,
+                        ($currentOnlineQty - $orderItem['qty'])
+                    );
 
                     $logger->addProductMessage(
                         $listingProduct->getListingId(),
@@ -255,10 +254,52 @@ class Ess_M2ePro_Model_Buy_Order_Builder extends Mage_Core_Model_Abstract
                         $listingProduct->getId(),
                         Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
                         $logsActionId,
-                        Ess_M2ePro_Model_Listing_Log::ACTION_CHANGE_STATUS_ON_CHANNEL,
+                        Ess_M2ePro_Model_Listing_Log::ACTION_CHANNEL_CHANGE,
+                        $tempLogMessage,
+                        Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
+                        Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
+                    );
+
+                    $listingProduct->save();
+
+                    continue;
+                }
+
+                $listingProduct->setData('online_qty', 0);
+
+                $tempLogMessages = array(Mage::helper('M2ePro')->__(
+                    'Item QTY was successfully changed from %from% to %to% .',
+                    $currentOnlineQty, 0
+                ));
+
+                if (!$listingProduct->isStopped()) {
+                    $statusChangedFrom = Mage::helper('M2ePro/Component_Buy')
+                        ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
+                    $statusChangedTo = Mage::helper('M2ePro/Component_Buy')
+                        ->getHumanTitleByListingProductStatus(Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+
+                    if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         // M2ePro_TRANSLATIONS
-                        // Item status was successfully changed to "Inactive".
-                        'Item status was successfully changed to "Inactive".',
+                        // Item Status was successfully changed from "%from%" to "%to%" .
+                        $tempLogMessages[] = Mage::helper('M2ePro')->__(
+                            'Item Status was successfully changed from "%from%" to "%to%" .',
+                            $statusChangedFrom,
+                            $statusChangedTo
+                        );
+                    }
+
+                    $listingProduct->setData('status', Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+                }
+
+                foreach($tempLogMessages as $tempLogMessage) {
+                    $logger->addProductMessage(
+                        $listingProduct->getListingId(),
+                        $listingProduct->getProductId(),
+                        $listingProduct->getId(),
+                        Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
+                        $logsActionId,
+                        Ess_M2ePro_Model_Listing_Log::ACTION_CHANNEL_CHANGE,
+                        $tempLogMessage,
                         Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
                         Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
                     );
@@ -298,6 +339,25 @@ class Ess_M2ePro_Model_Buy_Order_Builder extends Mage_Core_Model_Abstract
 
                 if ($currentOnlineQty > $orderItem['qty']) {
                     $otherListing->setData('online_qty', $currentOnlineQty - $orderItem['qty']);
+
+                    // M2ePro_TRANSLATIONS
+                    // Item QTY was successfully changed from %from% to %to% .
+                    $tempLogMessage = Mage::helper('M2ePro')->__(
+                        'Item QTY was successfully changed from %from% to %to% .',
+                        $currentOnlineQty,
+                        ($currentOnlineQty - $orderItem['qty'])
+                    );
+
+                    $logger->addProductMessage(
+                        $otherListing->getId(),
+                        Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
+                        $logsActionId,
+                        Ess_M2ePro_Model_Listing_Other_Log::ACTION_CHANNEL_CHANGE,
+                        $tempLogMessage,
+                        Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
+                        Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
+                    );
+
                     $otherListing->save();
 
                     continue;
@@ -305,17 +365,37 @@ class Ess_M2ePro_Model_Buy_Order_Builder extends Mage_Core_Model_Abstract
 
                 $otherListing->setData('online_qty', 0);
 
-                if (!$otherListing->isStopped()) {
-                    $otherListing->setData('status', Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+                $tempLogMessages = array(Mage::helper('M2ePro')->__(
+                    'Item QTY was successfully changed from %from% to %tp% .',
+                    $currentOnlineQty, 0
+                ));
 
+                if (!$otherListing->isStopped()) {
+                    $statusChangedFrom = Mage::helper('M2ePro/Component_Buy')
+                        ->getHumanTitleByListingProductStatus($otherListing->getStatus());
+                    $statusChangedTo = Mage::helper('M2ePro/Component_Buy')
+                        ->getHumanTitleByListingProductStatus(Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+
+                    if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
+                        // M2ePro_TRANSLATIONS
+                        // Item Status was successfully changed from "%from%" to "%to%" .
+                        $tempLogMessages[] = Mage::helper('M2ePro')->__(
+                            'Item Status was successfully changed from "%from%" to "%to%" .',
+                            $statusChangedFrom,
+                            $statusChangedTo
+                        );
+                    }
+
+                    $otherListing->setData('status', Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED);
+                }
+
+                foreach($tempLogMessages as $tempLogMessage) {
                     $logger->addProductMessage(
                         $otherListing->getId(),
                         Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
                         $logsActionId,
-                        Ess_M2ePro_Model_Listing_Other_Log::ACTION_CHANGE_STATUS_ON_CHANNEL,
-                        // M2ePro_TRANSLATIONS
-                        // Item status was successfully changed to "Inactive".
-                        'Item status was successfully changed to "Inactive".',
+                        Ess_M2ePro_Model_Listing_Other_Log::ACTION_CHANNEL_CHANGE,
+                        $tempLogMessage,
                         Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
                         Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
                     );

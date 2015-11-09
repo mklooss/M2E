@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Template_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
-    // ########################################
-
     const TAB_ID_AMAZON = 'amazon';
     const TAB_ID_BUY    = 'buy';
 
@@ -41,9 +39,11 @@ class Ess_M2ePro_Block_Adminhtml_Common_Template_Tabs extends Mage_Adminhtml_Blo
 
     protected function getAmazonTabBlock()
     {
+        $title = Mage::helper('M2ePro/Component_Amazon')->getTitle();
+
         $tab = array(
-            'label' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Amazon::TITLE),
-            'title' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Amazon::TITLE)
+            'label' => $title,
+            'title' => $title
         );
 
         if ($this->getActiveChannelTab() == self::TAB_ID_AMAZON) {
@@ -61,9 +61,11 @@ class Ess_M2ePro_Block_Adminhtml_Common_Template_Tabs extends Mage_Adminhtml_Blo
 
     protected function getBuyTabBlock()
     {
+        $title = Mage::helper('M2ePro/Component_Buy')->getTitle();
+
         $tab = array(
-            'label' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Buy::TITLE),
-            'title' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Buy::TITLE)
+            'label' => $title,
+            'title' => $title
         );
 
         if ($this->getActiveChannelTab() == self::TAB_ID_BUY) {

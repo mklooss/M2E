@@ -326,9 +326,9 @@ class Ess_M2ePro_Helper_Module_License extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        Mage::getModel('M2ePro/Servicing_Dispatcher')->processTasks(array(
+        Mage::getModel('M2ePro/Servicing_Dispatcher')->processTask(
             Mage::getModel('M2ePro/Servicing_Task_License')->getPublicNick()
-        ));
+        );
 
         return true;
     }

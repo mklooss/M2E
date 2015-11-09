@@ -318,7 +318,7 @@ abstract class Ess_M2ePro_Block_Adminhtml_Listing_Log_Grid extends Ess_M2ePro_Bl
             return;
         }
 
-        $collection->getSelect()->where('additional_data LIKE = ?', '%'. $value .'%');
+        $collection->getSelect()->where('additional_data LIKE ?', '%'. $value .'%');
     }
 
     // ####################################

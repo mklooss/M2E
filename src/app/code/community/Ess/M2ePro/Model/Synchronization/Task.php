@@ -489,11 +489,15 @@ abstract class Ess_M2ePro_Model_Synchronization_Task
             }
 
             if ($this->isComponentTask() && count(Mage::helper('M2ePro/Component')->getActiveComponents()) > 1) {
-                $componentHelper = 'Ess_M2ePro_Helper_Component_'.ucfirst($this->getComponent());
-                $title = constant($componentHelper . '::TITLE').' '.$title;
-            }
 
-            $this->getActualLockItem()->setTitle(Mage::helper('M2ePro')->__($title));
+                $componentHelper = Mage::helper('M2ePro/Component_'.ucfirst($this->getComponent()));
+
+                $this->getActualLockItem()
+                    ->setTitle(Mage::helper('M2ePro')
+                    ->__('%component% ' . $title, $componentHelper->getTitle()));
+            } else {
+                $this->getActualLockItem()->setTitle(Mage::helper('M2ePro')->__($title));
+            }
         }
 
         $this->getActualLockItem()->setPercents($this->getPercentsStart());
@@ -520,11 +524,15 @@ abstract class Ess_M2ePro_Model_Synchronization_Task
             }
 
             if ($this->isComponentTask() && count(Mage::helper('M2ePro/Component')->getActiveComponents()) > 1) {
-                $componentHelper = 'Ess_M2ePro_Helper_Component_'.ucfirst($this->getComponent());
-                $title = constant($componentHelper.'::TITLE').' '.$title;
-            }
 
-            $this->getActualLockItem()->setTitle(Mage::helper('M2ePro')->__($title));
+                $componentHelper = Mage::helper('M2ePro/Component_'.ucfirst($this->getComponent()));
+
+                $this->getActualLockItem()
+                    ->setTitle(Mage::helper('M2ePro')
+                    ->__('%component% ' . $title, $componentHelper->getTitle()));
+            } else {
+                $this->getActualLockItem()->setTitle(Mage::helper('M2ePro')->__($title));
+            }
         }
 
         $this->getActualLockItem()->setPercents($this->getPercentsEnd());

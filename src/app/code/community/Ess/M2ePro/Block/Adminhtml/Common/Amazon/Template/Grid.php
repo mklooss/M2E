@@ -7,7 +7,6 @@
 class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Template_Grid
     extends Ess_M2ePro_Block_Adminhtml_Common_Template_Grid
 {
-
     protected $nick = Ess_M2ePro_Helper_Component_Amazon::NICK;
 
     // ##########################################

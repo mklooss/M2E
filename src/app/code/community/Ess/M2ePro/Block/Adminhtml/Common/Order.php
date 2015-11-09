@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Order extends Ess_M2ePro_Block_Adminhtml_Common_Component_Tabs_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();

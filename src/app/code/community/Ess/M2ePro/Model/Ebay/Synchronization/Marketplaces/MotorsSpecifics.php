@@ -41,9 +41,8 @@ final class Ess_M2ePro_Model_Ebay_Synchronization_Marketplaces_MotorsSpecifics
 
         $params = $this->getParams();
 
-        return Mage::helper('M2ePro/Component_Ebay_Motor_Compatibility')->isMarketplaceSupportsSpecific(
-            $params['marketplace_id']
-        );
+        return Mage::helper('M2ePro/Component_Ebay_Motor_Compatibility')
+                    ->isMarketplaceSupportsSpecific($params['marketplace_id']);
     }
 
     protected function performActions()
@@ -100,7 +99,9 @@ final class Ess_M2ePro_Model_Ebay_Synchronization_Marketplaces_MotorsSpecifics
             $response = array();
         }
 
-        $this->getActualOperationHistory()->addText('Total received parts from eBay: '.count($response['data']));
+        $dataCount = isset($response['data']) ? count($response['data']) : 0;
+        $this->getActualOperationHistory()->addText("Total received parts from eBay: {$dataCount}");
+
         return $response;
     }
 
@@ -111,11 +112,16 @@ final class Ess_M2ePro_Model_Ebay_Synchronization_Marketplaces_MotorsSpecifics
         $tableMotorsSpecifics = Mage::getSingleton('core/resource')
                                         ->getTableName('m2epro_ebay_dictionary_motor_specific');
 
-        $connWrite->delete($tableMotorsSpecifics);
+        $connWrite->delete($tableMotorsSpecifics, '`is_custom` = 0');
     }
 
     protected function saveSpecificsToDb(array $data)
     {
+        $totalCountItems = count($data['items']);
+        if ($totalCountItems <= 0) {
+            return;
+        }
+
         /** @var $connWrite Varien_Db_Adapter_Pdo_Mysql */
         $connWrite = Mage::getSingleton('core/resource')->getConnection('core_write');
         $tableMotorsSpecifics = Mage::getSingleton('core/resource')
@@ -123,13 +129,15 @@ final class Ess_M2ePro_Model_Ebay_Synchronization_Marketplaces_MotorsSpecifics
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;
-        $totalCountItems      = count($data['items']);
         $percentsForOneStep   = ($this->getPercentsInterval()/2) / ($totalCountItems/$iterationsForOneStep);
-        $itemsForInsert       = array();
+
+        $temporaryIds   = array();
+        $itemsForInsert = array();
 
         for ($i = 0; $i < $totalCountItems; $i++) {
 
             $item = $data['items'][$i];
+            $temporaryIds[] = $item['ePID'];
 
             $itemsForInsert[] = array(
                 'epid'         => $item['ePID'],
@@ -143,8 +151,11 @@ final class Ess_M2ePro_Model_Ebay_Synchronization_Marketplaces_MotorsSpecifics
             );
 
             if (count($itemsForInsert) >= 100 || $i >= ($totalCountItems - 1)) {
+
                 $connWrite->insertMultiple($tableMotorsSpecifics, $itemsForInsert);
-                $itemsForInsert = array();
+                $connWrite->delete($tableMotorsSpecifics, array('is_custom = ?' => 1,
+                                                                'epid IN (?)'   => $temporaryIds));
+                $itemsForInsert = $temporaryIds = array();
             }
 
             if (++$iteration % $iterationsForOneStep == 0) {

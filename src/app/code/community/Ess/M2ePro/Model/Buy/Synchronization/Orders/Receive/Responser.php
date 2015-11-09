@@ -7,8 +7,6 @@
 class Ess_M2ePro_Model_Buy_Synchronization_Orders_Receive_Responser
     extends Ess_M2ePro_Model_Connector_Buy_Orders_Get_ItemsResponser
 {
-    // ##########################################################
-
     /** @var Ess_M2ePro_Model_Synchronization_Log $synchronizationLog */
     protected $synchronizationLog = NULL;
 

@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Order_NotCreatedFilter extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -47,4 +49,6 @@ class Ess_M2ePro_Block_Adminhtml_Order_NotCreatedFilter extends Ess_M2ePro_Block
     {
         return $this->getRequest()->getParam($this->getParamName());
     }
+
+    // ####################################
 }

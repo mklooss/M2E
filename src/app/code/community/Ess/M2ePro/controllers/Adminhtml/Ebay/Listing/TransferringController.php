@@ -7,8 +7,6 @@
 class Ess_M2ePro_Adminhtml_Ebay_Listing_TransferringController
     extends Ess_M2ePro_Controller_Adminhtml_Ebay_MainController
 {
-    //#############################################
-
     protected $sessionKey = 'ebay_listing_transferring';
 
     //#############################################

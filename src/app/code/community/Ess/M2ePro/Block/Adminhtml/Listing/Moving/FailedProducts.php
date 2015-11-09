@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Listing_Moving_FailedProducts extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -48,4 +50,6 @@ class Ess_M2ePro_Block_Adminhtml_Listing_Moving_FailedProducts extends Ess_M2ePr
 
         parent::_beforeToHtml();
     }
+
+    // ####################################
 }

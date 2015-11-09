@@ -13,12 +13,12 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Type_Relist_Response
     {
         $data = array();
 
-        if ($this->getConfigurator()->isAllPermitted()) {
+        if ($this->getConfigurator()->isAllAllowed()) {
             $data['synch_status'] = Ess_M2ePro_Model_Listing_Product::SYNCH_STATUS_OK;
             $data['synch_reasons'] = NULL;
         }
 
-        if ($this->getConfigurator()->isDetails() || $this->getConfigurator()->isImages()) {
+        if ($this->getConfigurator()->isDetailsAllowed() || $this->getConfigurator()->isImagesAllowed()) {
             $data['defected_messages'] = null;
         }
 
@@ -39,7 +39,7 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Type_Relist_Response
 
     public function getSuccessfulMessage()
     {
-        if ($this->getConfigurator()->isAll() || !$this->getConfigurator()->isOnly()) {
+        if ($this->getConfigurator()->isAllAllowed()) {
             // M2ePro_TRANSLATIONS
             // Item was successfully Relisted
             return 'Item was successfully Relisted';

@@ -189,8 +189,6 @@ class Ess_M2ePro_Model_Amazon_Synchronization_Defaults_UpdateListingsProducts_Re
                 continue;
             }
 
-            $newData['status_changer'] = Ess_M2ePro_Model_Listing_Product::STATUS_CHANGER_COMPONENT;
-
             if ((isset($newData['status']) && $newData['status'] != $existingItem['status']) ||
                 (isset($newData['online_qty']) && $newData['online_qty'] != $existingItem['online_qty']) ||
                 (isset($newData['online_price']) && $newData['online_price'] != $existingItem['online_price'])
@@ -204,34 +202,56 @@ class Ess_M2ePro_Model_Amazon_Synchronization_Defaults_UpdateListingsProducts_Re
                 }
             }
 
-            if (isset($newData['status']) && $newData['status'] != $existingItem['status']) {
+            $tempLogMessages = array();
 
-                $tempLogMessage = '';
-                switch ($newData['status']) {
-                    case Ess_M2ePro_Model_Listing_Product::STATUS_UNKNOWN:
-                        // M2ePro_TRANSLATIONS
-                        // Item status was successfully changed to "Unknown".
-                        $tempLogMessage = 'Item status was successfully changed to "Unknown".';
-                        break;
-                    case Ess_M2ePro_Model_Listing_Product::STATUS_LISTED:
-                        // M2ePro_TRANSLATIONS
-                        // tem status was successfully changed to "Active".
-                        $tempLogMessage = 'Item status was successfully changed to "Active".';
-                        break;
-                    case Ess_M2ePro_Model_Listing_Product::STATUS_STOPPED:
-                        // M2ePro_TRANSLATIONS
-                        // Item status was successfully changed to "Inactive".
-                        $tempLogMessage = 'Item status was successfully changed to "Inactive".';
-                        break;
+            if (isset($newData['online_price']) && $newData['online_price'] != $existingData['online_price']) {
+                // M2ePro_TRANSLATIONS
+                // Item Price was successfully changed from %from% to %to% .
+                $tempLogMessages[] = Mage::helper('M2ePro')->__(
+                    'Item Price was successfully changed from %from% to %to% .',
+                    $existingData['online_price'],
+                    $newData['online_price']
+                );
+            }
+
+            if (isset($newData['online_qty']) && $newData['online_qty'] != $existingData['online_qty']) {
+                // M2ePro_TRANSLATIONS
+                // Item QTY was successfully changed from %from% to %to% .
+                $tempLogMessages[] = Mage::helper('M2ePro')->__(
+                    'Item QTY was successfully changed from %from% to %to% .',
+                    $existingData['online_qty'],
+                    $newData['online_qty']
+                );
+            }
+
+            if (isset($newData['status']) && $newData['status'] != $existingData['status']) {
+
+                $newData['status_changer'] = Ess_M2ePro_Model_Listing_Product::STATUS_CHANGER_COMPONENT;
+
+                $statusChangedFrom = Mage::helper('M2ePro/Component_Amazon')
+                    ->getHumanTitleByListingProductStatus($existingData['status']);
+                $statusChangedTo = Mage::helper('M2ePro/Component_Amazon')
+                    ->getHumanTitleByListingProductStatus($newData['status']);
+
+                if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
+                    // M2ePro_TRANSLATIONS
+                    // Item Status was successfully changed from "%from%" to "%to%" .
+                    $tempLogMessages[] = Mage::helper('M2ePro')->__(
+                        'Item Status was successfully changed from "%from%" to "%to%" .',
+                        $statusChangedFrom,
+                        $statusChangedTo
+                    );
                 }
+            }
 
+            foreach($tempLogMessages as $tempLogMessage) {
                 $tempLog->addProductMessage(
                     $existingItem['listing_id'],
                     $existingItem['product_id'],
                     $existingItem['listing_product_id'],
                     Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
                     $this->getLogsActionId(),
-                    Ess_M2ePro_Model_Listing_Log::ACTION_CHANGE_STATUS_ON_CHANNEL,
+                    Ess_M2ePro_Model_Listing_Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
                     Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
                     Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
@@ -325,16 +345,27 @@ class Ess_M2ePro_Model_Amazon_Synchronization_Defaults_UpdateListingsProducts_Re
         while ($notReceivedItem = $stmtTemp->fetch()) {
 
             if (!in_array((int)$notReceivedItem['id'],$notReceivedIds)) {
+                $statusChangedFrom = Mage::helper('M2ePro/Component_Amazon')
+                    ->getHumanTitleByListingProductStatus($notReceivedItem['status']);
+                $statusChangedTo = Mage::helper('M2ePro/Component_Amazon')
+                    ->getHumanTitleByListingProductStatus(Ess_M2ePro_Model_Listing_Product::STATUS_BLOCKED);
+
+                // M2ePro_TRANSLATIONS
+                // Item Status was successfully changed from "%from%" to "%to%" .
+                $tempLogMessage = Mage::helper('M2ePro')->__(
+                    'Item Status was successfully changed from "%from%" to "%to%" .',
+                    $statusChangedFrom,
+                    $statusChangedTo
+                );
+
                 $tempLog->addProductMessage(
                     $notReceivedItem['listing_id'],
                     $notReceivedItem['product_id'],
                     $notReceivedItem['id'],
                     Ess_M2ePro_Helper_Data::INITIATOR_EXTENSION,
                     $this->getLogsActionId(),
-                    Ess_M2ePro_Model_Listing_Log::ACTION_CHANGE_STATUS_ON_CHANNEL,
-                    // M2ePro_TRANSLATIONS
-                    // Item status was successfully changed to "Inactive (Blocked)".
-                    'Item status was successfully changed to "Inactive (Blocked)".',
+                    Ess_M2ePro_Model_Listing_Log::ACTION_CHANNEL_CHANGE,
+                    $tempLogMessage,
                     Ess_M2ePro_Model_Log_Abstract::TYPE_SUCCESS,
                     Ess_M2ePro_Model_Log_Abstract::PRIORITY_LOW
                 );

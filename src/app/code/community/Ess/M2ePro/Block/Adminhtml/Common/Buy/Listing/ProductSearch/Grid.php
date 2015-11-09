@@ -8,6 +8,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_ProductSearch_Grid extends M
 {
     private $productId;
 
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();

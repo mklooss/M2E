@@ -6,8 +6,6 @@
 
 abstract class Ess_M2ePro_Block_Adminhtml_Common_Component_Abstract extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
-    // ########################################
-
     const TAB_ID_AMAZON = 'amazon';
     const TAB_ID_BUY    = 'buy';
 
@@ -141,10 +139,13 @@ abstract class Ess_M2ePro_Block_Adminhtml_Common_Component_Abstract extends Ess_
 
     protected function getTabLabelById($id)
     {
-        $id = ucfirst($id);
-        $label = @constant("Ess_M2ePro_Helper_Component_{$id}::TITLE");
+        $label = '';
 
-        return $label ? Mage::helper('M2ePro')->__($label) : Mage::helper('M2ePro')->__('N/A');
+        if (in_array($id, Mage::helper('M2ePro/Component')->getComponents())) {
+            $label = Mage::helper('M2ePro/Component_' . ucfirst($id))->getTitle();
+        }
+
+        return $label ? $label : Mage::helper('M2ePro')->__('N/A');
     }
 
     protected function getTabUrlById($id)

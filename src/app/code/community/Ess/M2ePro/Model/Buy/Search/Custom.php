@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Model_Buy_Search_Custom
 {
-    // ########################################
-
     /** @var Ess_M2ePro_Model_Listing_Product $listingProduct */
     private $listingProduct = null;
 

@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Log extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -57,7 +59,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Log extends Ess_M2ePro_Block_Adminhtml_W
 
         if (Mage::helper('M2ePro/Component_Amazon')->isActive()) {
             $items[] = array(
-                'label' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Amazon::TITLE),
+                'label' => Mage::helper('M2ePro/Component_Amazon')->getTitle(),
                 'url' => $this->getUrl('*/*/*', array(
                     '_current' => true,
                     'channel' => Ess_M2ePro_Block_Adminhtml_Common_Log_Tabs::CHANNEL_ID_AMAZON
@@ -66,7 +68,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Log extends Ess_M2ePro_Block_Adminhtml_W
         }
         if (Mage::helper('M2ePro/Component_Buy')->isActive()) {
             $items[] = array(
-                'label' => Mage::helper('M2ePro')->__(Ess_M2ePro_Helper_Component_Buy::TITLE),
+                'label' => Mage::helper('M2ePro/Component_Buy')->getTitle(),
                 'url' => $this->getUrl('*/*/*', array(
                     '_current' => true,
                     'channel' => Ess_M2ePro_Block_Adminhtml_Common_Log_Tabs::CHANNEL_ID_BUY
@@ -104,7 +106,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Log extends Ess_M2ePro_Block_Adminhtml_W
 
             $channel = $this->getRequest()->getParam('channel');
             if (!empty($channel) && $channel != Ess_M2ePro_Block_Adminhtml_Common_Log_Tabs::CHANNEL_ID_ALL) {
-                $channelTitle = constant( 'Ess_M2ePro_Helper_Component_' . ucfirst($channel) . '::TITLE' );
+                $channelTitle = Mage::helper('M2ePro/Component_' . ucfirst($channel))->getTitle();
             } else {
                 $channelTitle = Mage::helper('M2ePro')->escapeHtml('All Channels');
             }

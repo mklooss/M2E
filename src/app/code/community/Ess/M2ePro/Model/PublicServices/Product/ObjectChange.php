@@ -1,25 +1,25 @@
 <?php
 
 /*
- * @copyright  Copyright (c) 2015 by  ESS-UA.
- *
+ * @copyright  Copyright (c) 2013 by  ESS-UA.
+ */
+
+/*
     $model = Mage::getModel('M2ePro/PublicServices_Product_ObjectChange');
 
+    // you have a product ID for observing
     $model->observeProduct(561);
-    $model->observeProduct(562, 2);
 
+    // you have 'catalog/product' object for observing
     $product = Mage::getModel('catalog/product')
-          ->setStoreId(2)
-          ->load(562);
+                          ->setStoreId(2)
+                          ->load(562);
+    $model->observeProduct($product);
 
-    // Also you can make the changes by the direct database queries.
-
-    $product->setData('status', '1')
-          ->getResource()
-          ->saveAttribute($product, 'status');
+   // make changes for these products by direct sql
 
     $model->applyChanges();
- */
+*/
 
 class Ess_M2ePro_Model_PublicServices_Product_ObjectChange
 {

@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Order_Item_Product_Mapping_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();

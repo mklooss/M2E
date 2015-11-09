@@ -7,8 +7,6 @@
 abstract class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Settings_Grid_Abstract
     extends Ess_M2ePro_Block_Adminhtml_Magento_Product_Grid_Abstract
 {
-    // ####################################
-
     protected $listing = NULL;
 
     // ####################################

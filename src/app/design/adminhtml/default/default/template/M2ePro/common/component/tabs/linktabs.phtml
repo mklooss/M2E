@@ -1,9 +1,9 @@
 <?php if(!empty($tabs)): ?>
 <ul id="<?php echo $this->getId() ?>" class="m2epro-link-tabs">
 <?php foreach ($tabs as $_tab): ?>
-    <li style="float: left; padding: 5px; margin-right: 15px;">
+    <li style="float: left; margin-right: 5px;">
         <a href="<?php echo $this->getTabUrl($_tab)?>" id="<?php echo $this->getTabId($_tab) ?>" title="<?php echo $this->getTabTitle($_tab) ?>" class="tab-item-link-lvl-2 <?php echo $this->getTabClass($_tab) ?><?php if (preg_match('/\s?ajax\s?/', $this->getTabClass($_tab))) {?> notloaded<?php }?>">
-            <span>
+            <span style="padding: 5px 10px;">
                 <span class="changed" title="<?php echo $this->__('The information in this tab has been changed.') ?>"></span>
                 <span class="error" title="<?php echo $this->__('This tab contains invalid data. Please solve the problem before saving.') ?>"></span>
                 <?php echo $this->getTabLabel($_tab) ?>

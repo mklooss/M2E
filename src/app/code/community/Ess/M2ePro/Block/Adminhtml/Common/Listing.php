@@ -6,7 +6,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Listing extends Ess_M2ePro_Block_Adminhtml_Common_Component_Tabs_Container
 {
-
     // ########################################
 
     public function __construct()
@@ -82,7 +81,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing extends Ess_M2ePro_Block_Adminht
         $constants = Mage::helper('M2ePro')
             ->getClassConstantAsJson('Ess_M2ePro_Helper_Component_'.ucfirst($this->getActiveTab()));
 
-        $ajax = (int)$this->getRequest()->isAjax();
+        $ajax = (int)$this->getRequest()->isXmlHttpRequest();
 
         $javascripts = <<<HTML
 
@@ -107,7 +106,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing extends Ess_M2ePro_Block_Adminht
             EditListingTitleObj.openPopup(el);
         }
 
-        EditListingTitleObj = new EditListingTitle();
+        EditListingTitleObj = new ListingEditListingTitle();
     };
 
     {$ajax} ? init() : Event.observe(window, 'load', init);
@@ -191,7 +190,7 @@ HTML;
         $helpBlock = $this->getLayout()->createBlock('M2ePro/adminhtml_common_listing_help');
 
         return $helpBlock->toHtml() . <<<HTML
-<div class="content-header">
+<div class="content-header skip-header">
     <table cellspacing="0">
         <tr>
             <td{$hideChannels}>{$tabsContainer->toHtml()}</td>

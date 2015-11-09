@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Buy_Template_NewProduct_Edit_Tabs_Attributes extends Mage_Adminhtml_Block_Widget
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -36,4 +38,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Template_NewProduct_Edit_Tabs_Attrib
 
         return Mage::helper('M2ePro')->escapeJs($html);
     }
+
+    // ####################################
 }

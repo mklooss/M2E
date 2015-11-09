@@ -7,6 +7,7 @@
 class Ess_M2ePro_Model_Upgrade_MySqlSetup extends Mage_Core_Model_Resource_Setup
 {
     private $moduleTables = array();
+    private $modifiersCache = array();
 
     //####################################
 
@@ -108,6 +109,40 @@ class Ess_M2ePro_Model_Upgrade_MySqlSetup extends Mage_Core_Model_Resource_Setup
     public function getRelatedSqlFilePath($pathPhpFile)
     {
         return dirname($pathPhpFile).DS.basename($pathPhpFile,'.php').'.sql';
+    }
+
+    //####################################
+
+    public function getTableModifier($tableName)
+    {
+        /** @var Ess_M2ePro_Model_Upgrade_Modifier_Table|false $tableModifier */
+        $tableModifier = $this->getModifier($tableName, 'table', 'modifier_table');
+        return $tableModifier;
+    }
+
+    public function getConfigUpdater($tableName)
+    {
+        /** @var Ess_M2ePro_Model_Upgrade_Modifier_ConfigUpdater|false $configUpdater */
+        $configUpdater = $this->getModifier($tableName, 'configUpdater', 'modifier_config_updater');
+        return $configUpdater;
+    }
+
+    private function getModifier($tableName, $modifierModelName, $cacheKey = NULL)
+    {
+        $cacheKey = !is_null($cacheKey) ? $cacheKey . $tableName : $tableName;
+        if (isset($this->modifiersCache[$cacheKey])) {
+            return $this->modifiersCache[$cacheKey];
+        }
+
+        $modifierModelName = 'M2ePro/Upgrade_Modifier_' . ucfirst($modifierModelName);
+        /** @var Ess_M2ePro_Model_Upgrade_Modifier_Abstract $tableModifier */
+        $tableModifier = Mage::getModel($modifierModelName);
+        $tableModifier->setInstaller($this);
+        $tableModifier->setConnection($this->getConnection());
+        $tableModifier->setTableName($tableName);
+
+        $this->modifiersCache[$cacheKey] = $tableModifier;
+        return $tableModifier;
     }
 
     //####################################

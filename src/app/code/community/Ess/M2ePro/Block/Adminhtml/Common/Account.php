@@ -55,5 +55,4 @@ class Ess_M2ePro_Block_Adminhtml_Common_Account extends Ess_M2ePro_Block_Adminht
     }
 
     // ########################################
-
 }

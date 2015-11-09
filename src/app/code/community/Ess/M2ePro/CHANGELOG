@@ -1,3 +1,49 @@
+* 6.3.4 (r9154) (16/07/2015)
+
+* Added: Min-Max intervals for Variational Products Prices
+* Added: Logs about changes of Price/QTY/Status directly on channel
+* Added: [eBay] Popup with all Variations and their Prices/QTY/Statuses
+* Added: [eBay] Custom Import/Management Tool of ePIDs / kTypes records
+* Added: [eBay] Ability to set UPC/EAN/ISBN for each Variation manually
+* Added: [eBay] Current/Start/Reserve/"Buy It Now" Prices are shown for auction Items
+* Added: [Amazon] Ability to remember relations of Amazon and Magento Attributes/Options for variational Products
+* Added: [Amazon/Rakuten.com] Fully New / Updated Documentation (http://docs.m2epro.com/) + links from Pages
+* Added: [Amazon/Rakuten.com] Ability to set SKU modifications rules for List action
+* Added: [Amazon/Rakuten.com] Ability to search 3rd Party Listings and M2E Pro listings together
+* Improvement: Add record to Listing Log when product QTY was changed by QTY Reservation functionality
+* Improvement: Performance of QTY/Price updating ("Request wait timeout exceeded" error message)
+* Improvement: More stable connections with M2E Pro servers (connect time was reduced)
+* Improvement: More friendly and convenient installation and configuration Wizards
+* Improvement: Performance was increased during Synchronization and List/Relist/... actions
+* Improvement: [eBay] The note about UPC/EAN/ISBN requirements for selected Primary Category was added
+* Improvement: [eBay] UPC/EAN/ISBN/MPN identifiers for each Variation of the Item
+* Improvement: [eBay] Validation of not more than 25 Item Specifics for each Primary Category
+* Improvement: [eBay] Price for Fixed and Auction can be set separatelly if type is pulled from attribute
+* Improvement: [eBay] 3rd Party Listings / Parts Compatibility / Feedbacks data are hidden if they are disabled
+* Improvement: [eBay] Track changes of "images" and "media_gallery" Attributes in the Custom Description
+* Improvement: [eBay] The marketplaces were grouped by Parts of the Worlds
+* Fix: "Access Denied" message on the Amazon and Rakuten.com channels
+* Fix: [eBay] Useless revises of the Auction Items if there was a price bid on Channel
+* Fix: [eBay] Terapeak widget did not work if Search or Reset Filter of the grid was performed
+* Fix: [eBay] View Mode "Translation" was not shown if there were no any Translations of Products Data
+* Fix: [eBay] Payment transactions were not created in Magento during Magento Order creation
+* Fix: [eBay] Image Gallery was not added in the Custom Description if a customized theme has been chosen in Magento
+* Fix: [eBay] Fatal error if Listing Type source is Attribute and the value in it has wrong or empty value
+* Fix: [eBay] Empty shipping services dropdown for some marketplaces (for example Ireland)
+* Fix: [Amazon] Empty titles of 3rd Party Listings can be received in another way
+* Fix: [Amazon] ISBN/UPC/EAN search can return only one Product but there are several of them
+* Fix: [Amazon] Shipping/Package/Item weight or volume is not sent for Parent Products if they are not filled
+* Fix: [Amazon] Fatal error during sort of Amazon Orders by Promotion Amount column
+* Fix: [Amazon] Incorrect currency was shown on Amazon Order Page for Pending and Cancelled orders
+* Fix: [Amazon] Simple/Single Products could be listed with zero Quantity
+* Fix: [Amazon] Memory leak during the process of Parent/Child Products management
+* Fix: [Amazon / Rakuten.com] "Cannot retrieve entity config: M2ePro/Array" error in Orders Log
+* Fix: [Amazon/Rakuten.com] "Relist when Stopped Manually" feature did not work correctly (item could be relisted)
+* Fix: [Amazon/Rakuten.com] Undefined value instead of Default Channel name during installation wizard
+* Removed: Ability to disable / enable Orders/Feedbacks/3rd Party Listings synchronization, only for certain account
+* Removed: [eBay] GTIN from Description Policy (deprecated feature on eBay)
+* Removed: [eBay] "List if no Product" from Description Policy (deprecated feature on eBay)
+
 * 6.3.3 (r8915) (14/06/2015)
 
 * Added: Ability to set the value of Price Deviation in Synchronization Template (optimization)

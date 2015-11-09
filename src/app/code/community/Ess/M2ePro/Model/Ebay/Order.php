@@ -10,8 +10,6 @@
  */
 class Ess_M2ePro_Model_Ebay_Order extends Ess_M2ePro_Model_Component_Child_Ebay_Abstract
 {
-    // ##########################################################
-
     const ORDER_STATUS_ACTIVE     = 0;
     const ORDER_STATUS_COMPLETED  = 1;
     const ORDER_STATUS_CANCELLED  = 2;
@@ -545,7 +543,7 @@ class Ess_M2ePro_Model_Ebay_Order extends Ess_M2ePro_Model_Component_Child_Ebay_
 
     public function canCreatePaymentTransaction()
     {
-        if ($this->hasExternalTransactions()) {
+        if (!$this->hasExternalTransactions()) {
             return false;
         }
 

@@ -1,4 +1,4 @@
-BuyListingProductSearchHandler = Class.create(ActionHandler, {
+CommonBuyListingProductSearchHandler = Class.create(ActionHandler, {
 
     //----------------------------------
 
@@ -198,11 +198,6 @@ BuyListingProductSearchHandler = Class.create(ActionHandler, {
 
     addNewGeneralId: function(listingProductIds)
     {
-        if (!this.options.customData.isMarketplaceSynchronized) {
-            alert(this.options.text.not_synchronized_marketplace.replace('%code%',this.options.customData.marketplace.code));
-            return setLocation(this.options.url.marketplace_synch);
-        }
-
         listingProductIds = listingProductIds || this.params.productId;
 
         this.postForm(

@@ -38,9 +38,8 @@ final class Ess_M2ePro_Model_Amazon_Synchronization_Marketplaces_Details
         $params = $this->getParams();
 
         /** @var $marketplace Ess_M2ePro_Model_Marketplace **/
-        $marketplace = Mage::helper('M2ePro/Component_Amazon')->getObject(
-            'Marketplace', (int)$params['marketplace_id']
-        );
+        $marketplace = Mage::helper('M2ePro/Component_Amazon')
+                            ->getObject('Marketplace', (int)$params['marketplace_id']);
 
         $this->getActualOperationHistory()->addText('Starting Marketplace "'.$marketplace->getTitle().'"');
 
@@ -68,13 +67,13 @@ final class Ess_M2ePro_Model_Amazon_Synchronization_Marketplaces_Details
 
     protected function receiveFromAmazon(Ess_M2ePro_Model_Marketplace $marketplace)
     {
-        $dispatcherObject = Mage::getModel('M2ePro/Connector_Amazon_Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('marketplace','get','info',
-                                                               array('include_details' => true,
-                                                                     'marketplace' => $marketplace->getNativeId()),
-                                                               'info',NULL,NULL);
+        $dispatcherObj = Mage::getModel('M2ePro/Connector_Amazon_Dispatcher');
+        $connectorObj  = $dispatcherObj->getVirtualConnector('marketplace','get','info',
+                                                             array('include_details' => true,
+                                                                   'marketplace' => $marketplace->getNativeId()),
+                                                             'info',NULL,NULL);
 
-        $details = $dispatcherObject->process($connectorObj);
+        $details = $dispatcherObj->process($connectorObj);
 
         if (is_null($details)) {
             return array();
@@ -97,10 +96,11 @@ final class Ess_M2ePro_Model_Amazon_Synchronization_Marketplaces_Details
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
             'product_data'   => isset($details['product_data']) ? json_encode($details['product_data']) : NULL,
-            'vocabulary'     => isset($details['vocabulary']) ? json_encode($details['vocabulary']) : NULL,
         );
 
         $connWrite->insert($tableMarketplaces, $data);
+
+        Mage::helper('M2ePro/Component_Amazon_Vocabulary')->setServerData($details['vocabulary']);
     }
 
     protected function logSuccessfulOperation(Ess_M2ePro_Model_Marketplace $marketplace)
@@ -111,7 +111,7 @@ final class Ess_M2ePro_Model_Amazon_Synchronization_Marketplaces_Details
         $tempString = Mage::getModel('M2ePro/Log_Abstract')->encodeDescription(
             'The "Details" Action for %amazon% Marketplace: "%mrk%" has been successfully completed.',
             array('!amazon' => Mage::helper('M2ePro/Component_Amazon')->getTitle(),
-                  'mrk'    => $marketplace->getTitle())
+                  'mrk'     => $marketplace->getTitle())
         );
 
         $this->getLog()->addMessage($tempString,

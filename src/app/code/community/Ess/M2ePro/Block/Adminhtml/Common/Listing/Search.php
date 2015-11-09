@@ -52,7 +52,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Listing_Search extends Mage_Adminhtml_Bl
         $helpBlock = $this->getLayout()->createBlock('M2ePro/adminhtml_common_listing_search_help');
 
         return $helpBlock->toHtml() . <<<HTML
-<div class="content-header" {$hideChannels}>
+<div class="content-header skip-header" {$hideChannels}>
     <table cellspacing="0">
         <tr>
             <td>{$tabsBlock->toHtml()}</td>

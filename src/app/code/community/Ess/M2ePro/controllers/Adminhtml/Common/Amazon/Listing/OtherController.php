@@ -42,7 +42,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Listing_OtherController
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings/listing_other');
+        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings');
     }
 
     //#############################################

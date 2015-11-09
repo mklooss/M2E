@@ -71,7 +71,6 @@ class Ess_M2ePro_Helper_Module_Database_Structure extends Mage_Core_Helper_Abstr
             'm2epro_ebay_dictionary_motor_specific',
             'm2epro_ebay_dictionary_motor_ktype',
             'm2epro_ebay_dictionary_shipping',
-            'm2epro_ebay_dictionary_shipping_category',
             'm2epro_ebay_feedback',
             'm2epro_ebay_feedback_template',
             'm2epro_ebay_item',

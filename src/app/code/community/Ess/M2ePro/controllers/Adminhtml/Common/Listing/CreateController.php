@@ -10,14 +10,16 @@ class Ess_M2ePro_Adminhtml_Common_Listing_CreateController
     protected $component;
     protected $sessionKeyPostfix = '_listing_create';
 
+    //#############################################
+
     protected function _initAction()
     {
         $component = $this->getComponent();
-        $componentTitle = constant('Ess_M2ePro_Helper_Component_'.ucfirst($component).'::TITLE');
+        $componentTitle = Mage::helper('M2ePro/Component_'.ucfirst($component))->getTitle();
 
         $this->loadLayout()
             ->_title(Mage::helper('M2ePro')->__('Manage Listings'))
-            ->_title(Mage::helper('M2ePro')->__($componentTitle.' Listings'));
+            ->_title(Mage::helper('M2ePro')->__('%component_title% Listings', $componentTitle));
 
         $this->getLayout()->getBlock('head')
             ->setCanLoadExtJs(true)

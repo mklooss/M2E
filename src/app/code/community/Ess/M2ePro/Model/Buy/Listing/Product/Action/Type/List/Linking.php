@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Model_Buy_Listing_Product_Action_Type_List_Linking
 {
-    // ########################################
-
     /** @var Ess_M2ePro_Model_Listing_Product $listingProduct */
     private $listingProduct = null;
 

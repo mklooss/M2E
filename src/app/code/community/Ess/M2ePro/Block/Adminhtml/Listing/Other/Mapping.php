@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Listing_Other_Mapping extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -34,4 +36,6 @@ class Ess_M2ePro_Block_Adminhtml_Listing_Other_Mapping extends Ess_M2ePro_Block_
 
         parent::_beforeToHtml();
     }
+
+    // ####################################
 }

@@ -54,7 +54,7 @@ class Ess_M2ePro_Adminhtml_Common_Buy_ListingController
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings/listing');
+        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings');
     }
 
     //#############################################
@@ -92,46 +92,6 @@ class Ess_M2ePro_Adminhtml_Common_Buy_ListingController
     {
         $block = $this->loadLayout()->getLayout()->createBlock('M2ePro/adminhtml_common_buy_listing_search_grid');
         $this->getResponse()->setBody($block->toHtml());
-    }
-
-    //#############################################
-
-    public function getProductsFromCategoriesAction()
-    {
-        $hideProductsOthersListings = (bool)$this->getRequest()->getParam('hide_products_others_listings', true);
-        $listingId = $this->getRequest()->getParam('listing_id');
-        $listing = Mage::helper('M2ePro/Component_Buy')->getCachedObject('Listing',$listingId);
-
-        $categories = $this->getRequest()->getParam('categories');
-        $categoriesIds = explode(',', $categories);
-        $categoriesIds = array_unique($categoriesIds);
-
-        $categoriesSave = $this->getRequest()->getParam('categories_save');
-        if ($listing->isSourceProducts()) {
-            $categoriesSave = 0;
-        }
-
-        $oldCategories = $listing->getCategories();
-        $oldCategoriesIds = array();
-        foreach ($oldCategories as $oldCategory) {
-            $oldCategoriesIds[] = $oldCategory['category_id'];
-        }
-
-        $products = array();
-        foreach ($categoriesIds as $categoryId) {
-            if ($categoriesSave && !in_array($categoryId, $oldCategoriesIds)) {
-                Mage::getModel('M2ePro/Listing_Category')
-                    ->setData(array('listing_id'=>$listing->getId(),'category_id'=>$categoryId))
-                    ->save();
-            }
-
-            $tempProducts = $listing->getProductsFromCategory($categoryId,$hideProductsOthersListings);
-            !empty($tempProducts) && $products = array_merge($products, $tempProducts);
-        }
-
-        if (!empty($products)) {
-            echo implode(',', $products);
-        }
     }
 
     //#############################################
@@ -241,12 +201,8 @@ class Ess_M2ePro_Adminhtml_Common_Buy_ListingController
         // tab: settings
         //--------------------
         $keys = array(
-            'title',
             'template_selling_format_id',
             'template_synchronization_id',
-
-            'categories_add_action',
-            'categories_delete_action'
         );
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -257,27 +213,6 @@ class Ess_M2ePro_Adminhtml_Common_Buy_ListingController
 
         $model->addData($data)->save();
 
-        // Delete old categories
-        //---------------
-        $oldCategories = (array)$model->getCategories(true);
-        foreach ($oldCategories as $oldCategory) {
-            $oldCategory->deleteInstance();
-        }
-
-        // Save selected categories
-        //---------------
-        if (!empty($post['selected_categories'])) {
-            $categoriesIds = explode(',',$post['selected_categories']);
-            $categoriesIds = array_unique($categoriesIds);
-
-            foreach ($categoriesIds as $categoryId) {
-                Mage::getModel('M2ePro/Listing_Category')
-                    ->setData(array('listing_id'=> $id,'category_id'=>(int)$categoryId))
-                    ->save();
-            }
-        }
-        //---------------
-
         $templateData = array();
 
         // tab: channel settings
@@ -287,6 +222,8 @@ class Ess_M2ePro_Adminhtml_Common_Buy_ListingController
 
             'sku_mode',
             'sku_custom_attribute',
+            'sku_modification_mode',
+            'sku_modification_custom_value',
             'generate_sku_mode',
 
             'general_id_mode',

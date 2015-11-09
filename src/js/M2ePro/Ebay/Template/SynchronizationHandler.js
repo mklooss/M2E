@@ -352,10 +352,12 @@ EbayTemplateSynchronizationHandler.prototype = Object.extend(new CommonHandler()
         if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Synchronization::REVISE_UPDATE_PRICE_YES')) {
             $('revise_update_price_max_allowed_deviation_mode_tr').show();
             $('revise_update_price_max_allowed_deviation_tr').show();
+            $('revise_update_price_line').show();
             $('revise_update_price_max_allowed_deviation_mode').simulate('change');
         } else {
             $('revise_update_price_max_allowed_deviation_mode_tr').hide();
             $('revise_update_price_max_allowed_deviation_tr').hide();
+            $('revise_update_price_line').hide();
             $('revise_update_price_max_allowed_deviation_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF');
         }
     },

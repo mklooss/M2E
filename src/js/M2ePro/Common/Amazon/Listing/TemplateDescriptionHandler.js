@@ -1,4 +1,4 @@
-AmazonListingTemplateDescriptionHandler = Class.create(ActionHandler, {
+CommonAmazonListingTemplateDescriptionHandler = Class.create(ActionHandler, {
 
     //----------------------------------
 

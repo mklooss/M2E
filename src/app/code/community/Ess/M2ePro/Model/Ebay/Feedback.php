@@ -13,8 +13,6 @@ class Ess_M2ePro_Model_Ebay_Feedback extends Ess_M2ePro_Model_Component_Abstract
     const TYPE_POSITIVE = 'Positive';
     const TYPE_NEGATIVE = 'Negative';
 
-    // ########################################
-
     /**
      * @var Ess_M2ePro_Model_Account
      */

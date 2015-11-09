@@ -267,8 +267,12 @@ class Ess_M2ePro_Model_Amazon_Listing_Other_Moving
             'relist_qty_value_max' => 10,
             'revise_update_qty' => Ess_M2ePro_Model_Amazon_Template_Synchronization::REVISE_UPDATE_QTY_NONE,
             'revise_update_price' => Ess_M2ePro_Model_Amazon_Template_Synchronization::REVISE_UPDATE_PRICE_NONE,
+            'revise_update_details' => Ess_M2ePro_Model_Amazon_Template_Synchronization::REVISE_UPDATE_DETAILS_NONE,
+            'revise_update_images' => Ess_M2ePro_Model_Amazon_Template_Synchronization::REVISE_UPDATE_IMAGES_NONE,
             'revise_change_selling_format_template' =>
                                 Ess_M2ePro_Model_Template_Synchronization::REVISE_CHANGE_SELLING_FORMAT_TEMPLATE_NONE,
+            'revise_change_description_template' =>
+                            Ess_M2ePro_Model_Amazon_Template_Synchronization::REVISE_CHANGE_DESCRIPTION_TEMPLATE_NONE,
             'revise_change_listing' =>
                                 Ess_M2ePro_Model_Template_Synchronization::REVISE_CHANGE_LISTING_NONE,
             'stop_status_disabled' => Ess_M2ePro_Model_Amazon_Template_Synchronization::STOP_STATUS_DISABLED_NONE,

@@ -5,6 +5,8 @@
     $uniqueId      = $this->getUniqueId();
     $internalData  = $this->getInternalData();
 
+    $requiredDetailsFields = $this->getRequiredDetailsFields();
+
     $dictionarySpecifics       = json_encode($this->getDictionarySpecifics());
     $ebaySelectedSpecifics     = json_encode($this->getEbaySelectedSpecifics());
     $customSelectedSpecifics   = json_encode($this->getCustomSelectedSpecifics());
@@ -71,6 +73,22 @@
     //-----------------------------
 
 </script>
+
+<?php if ($requiredDetailsFields) : ?>
+    <ul class="messages">
+        <li class="notice-msg">
+            <span>
+                <?php echo Mage::helper('M2ePro')->__('
+                    You selected an eBay Category where %UPC% Value is required.<br/>
+
+                    <strong>Note:</strong> also do not forget to check setting in eBay Catalog Identifiers block of
+                    Description Policy you are using.',
+                    implode(', ', $requiredDetailsFields)
+                ); ?>
+            </span>
+        </li>
+    </ul>
+<?php endif; ?>
 
 <form id="<?php echo $uniqueId; ?>category_specific_form">
 
@@ -175,6 +193,10 @@
             </div>
         </div>
     <?php endif; ?>
+
+    <div style="display: none;" class="validation-advice" id="<?php echo $uniqueId; ?>maximum_specifics_error" >
+        <?php echo Mage::helper('M2ePro')->__('You can select not more than 25 specifics.'); ?>
+    </div>
 
 </div>
 

@@ -55,10 +55,6 @@ class Ess_M2ePro_Adminhtml_Common_LogController
 
     public function listingAction()
     {
-        if (!Mage::getSingleton('admin/session')->isAllowed('m2epro_common/logs/listing')) {
-            return $this->_forward('denied');
-        }
-
         $id = $this->getRequest()->getParam('id', false);
         if ($id) {
             $listing = Mage::helper('M2ePro/Component')->getCachedUnknownObject('Listing', $id);
@@ -144,10 +140,6 @@ class Ess_M2ePro_Adminhtml_Common_LogController
 
     public function listingOtherAction()
     {
-        if (!Mage::getSingleton('admin/session')->isAllowed('m2epro_common/logs/listing_other')) {
-            return $this->_forward('denied');
-        }
-
         $id = $this->getRequest()->getParam('id');
         $model = Mage::getModel('M2ePro/Listing_Other')->load($id);
 
@@ -195,11 +187,6 @@ class Ess_M2ePro_Adminhtml_Common_LogController
 
     public function synchronizationAction()
     {
-        if (!Mage::getSingleton('admin/session')->isAllowed('m2epro_common/logs/synchronization')) {
-            $this->_forward('denied');
-            return;
-        }
-
         $this->_initAction()
              ->_title(Mage::helper('M2ePro')->__('Synchronization Log'))
              ->_addContent($this->getLayout()->createBlock(
@@ -222,11 +209,6 @@ class Ess_M2ePro_Adminhtml_Common_LogController
 
     public function orderAction()
     {
-        if (!Mage::getSingleton('admin/session')->isAllowed('m2epro_common/logs/order')) {
-            $this->_forward('denied');
-            return;
-        }
-
         $this->_initAction()
              ->_title(Mage::helper('M2ePro')->__('Orders Log'))
              ->_addContent($this->getLayout()->createBlock(

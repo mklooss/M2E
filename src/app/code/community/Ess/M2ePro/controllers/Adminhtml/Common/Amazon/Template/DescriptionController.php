@@ -37,7 +37,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/templates/description');
+        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/configuration');
     }
 
     //#############################################
@@ -576,7 +576,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
 
         $select = $connRead->select()
             ->from(Mage::getSingleton('core/resource')->getTableName('m2epro_amazon_dictionary_category'))
-            ->where('is_listable = 1')
+            ->where('is_leaf = 1')
             ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'));
 
         $where = array();

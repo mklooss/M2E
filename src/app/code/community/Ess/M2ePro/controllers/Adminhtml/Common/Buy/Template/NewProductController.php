@@ -43,7 +43,7 @@ class Ess_M2ePro_Adminhtml_Common_Buy_Template_NewProductController
 
     protected function _isAllowed()
     {
-        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings/listing');
+        return Mage::getSingleton('admin/session')->isAllowed('m2epro_common/listings');
     }
 
     //#############################################
@@ -385,6 +385,7 @@ class Ess_M2ePro_Adminhtml_Common_Buy_Template_NewProductController
             $connRead->select()
                 ->from($table,'*')
                 ->where('node_id = ?', $nodeId)
+                ->order('title ASC')
                 ->query()
                 ->fetchAll()
         ));
@@ -423,7 +424,7 @@ class Ess_M2ePro_Adminhtml_Common_Buy_Template_NewProductController
 
         $select = $connRead->select()->limit(1000);
         $select->from(Mage::getSingleton('core/resource')->getTableName('m2epro_buy_dictionary_category'),'*');
-        $select->where('is_listable = 1');
+        $select->where('is_leaf = 1');
 
         $where = '';
         $parts = explode(' ', $keywords);

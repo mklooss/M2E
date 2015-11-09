@@ -6,8 +6,6 @@
 
 class Ess_M2ePro_Block_Adminhtml_Ebay_Order_View_Form extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
-    // ##########################################################
-
     public $shippingAddress = array();
 
     public $ebayWarehouseAddress = array();
@@ -19,7 +17,7 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Order_View_Form extends Ess_M2ePro_Block_A
     /** @var $order Ess_M2ePro_Model_Order */
     public $order = null;
 
-    // ##########################################################
+    // ####################################
 
     public function __construct()
     {
@@ -170,5 +168,5 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Order_View_Form extends Ess_M2ePro_Block_A
         return $taxAmount + $shippingTaxAmount;
     }
 
-    // ##########################################################
+    // ####################################
 }

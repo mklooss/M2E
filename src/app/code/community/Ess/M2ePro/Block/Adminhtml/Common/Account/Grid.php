@@ -6,6 +6,7 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Account_Grid extends Ess_M2ePro_Block_Adminhtml_Account_Grid
 {
+    // ####################################
 
     protected function _prepareCollection()
     {

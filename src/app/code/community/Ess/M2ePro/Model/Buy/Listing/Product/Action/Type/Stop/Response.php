@@ -33,4 +33,13 @@ class Ess_M2ePro_Model_Buy_Listing_Product_Action_Type_Stop_Response
     }
 
     // ########################################
+
+    protected function setLastSynchronizationDates()
+    {
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+        $additionalData['last_synchronization_dates']['selling'] = Mage::helper('M2ePro')->getCurrentGmtDate();
+        $this->getListingProduct()->setSettings('additional_data', $additionalData);
+    }
+
+    // ########################################
 }

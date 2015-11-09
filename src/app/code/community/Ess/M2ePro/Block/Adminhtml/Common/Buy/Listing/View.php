@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_View extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -225,7 +227,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_View extends Mage_Adminhtml_
         $marketplaceInstance = Mage::helper('M2ePro/Component_Buy')->getCachedObject('Marketplace',$marketplaceId);
         $marketplace = json_encode($marketplaceInstance->getData());
 
-        $isMarketplaceSynchronized = json_encode($marketplaceInstance->getChildObject()->isSynchronized());
         $marketplaceSynchUrl = $this->getUrl(
             '*/adminhtml_common_marketplace/index',
             array('tab' => Ess_M2ePro_Block_Adminhtml_Common_Marketplace::TAB_ID_RAKUTEN)
@@ -358,11 +359,10 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_View extends Mage_Adminhtml_
     M2ePro.customData.ignoreListings = '{$ignoreListings}';
 
     M2ePro.customData.marketplace = {$marketplace};
-    M2ePro.customData.isMarketplaceSynchronized = {$isMarketplaceSynchronized};
 
     Event.observe(window, 'load', function() {
 
-        ListingGridHandlerObj = new BuyListingGridHandler(
+        ListingGridHandlerObj = new CommonBuyListingGridHandler(
             'buyListingViewGrid{$listingData['id']}',
             {$listingData['id']}
         );
@@ -374,7 +374,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing_View extends Mage_Adminhtml_
         ListingProgressBarObj = new ProgressBar('listing_view_progress_bar');
         GridWrapperObj = new AreaWrapper('listing_view_content_container');
 
-        ListingProductVariationHandlerObj = new ListingProductVariationHandler(M2ePro,
+        ListingProductVariationHandlerObj = new CommonListingProductVariationHandler(M2ePro,
                                                                                ListingGridHandlerObj);
 
         if (M2ePro.productsIdsForList) {
@@ -593,4 +593,6 @@ HTML;
 
         return $items;
     }
+
+    // ####################################
 }

@@ -36,4 +36,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Listing extends Mage_Adminhtml_Block
 
         $this->setTemplate('M2ePro/widget/grid/container/only_content.phtml');
     }
+
+    // ####################################
 }

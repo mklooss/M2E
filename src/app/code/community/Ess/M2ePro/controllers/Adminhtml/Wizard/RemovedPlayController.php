@@ -34,5 +34,4 @@ class Ess_M2ePro_Adminhtml_Wizard_RemovedPlayController
     }
 
     //#############################################
-
 }

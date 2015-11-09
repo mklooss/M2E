@@ -20,7 +20,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_Other_View extends Mage_A
         if (!Mage::helper('M2ePro/View_Common_Component')->isSingleActiveComponent()) {
             $this->_headerText = Mage::helper('M2ePro')->__(
                 '3rd Party %channel_title% Listings',
-                Ess_M2ePro_Helper_Component_Amazon::TITLE
+                Mage::helper('M2ePro/Component_Amazon')->getTitle()
             );
         } else {
             $this->_headerText = Mage::helper('M2ePro')->__('3rd Party Listings');
@@ -232,7 +232,7 @@ class Ess_M2ePro_Block_Adminhtml_Common_Amazon_Listing_Other_View extends Mage_A
         ListingProgressBarObj = new ProgressBar('listing_other_progress_bar');
         GridWrapperObj = new AreaWrapper('listing_other_content_container');
 
-        AmazonListingOtherGridHandlerObj    = new AmazonListingOtherGridHandler('amazonListingOtherGrid');
+        AmazonListingOtherGridHandlerObj    = new CommonAmazonListingOtherGridHandler('amazonListingOtherGrid');
         AmazonListingOtherMappingHandlerObj = new ListingOtherMappingHandler(
             AmazonListingOtherGridHandlerObj,
             'amazon'

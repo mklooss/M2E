@@ -1,5 +1,5 @@
-ListingProductVariationHandler = Class.create();
-ListingProductVariationHandler.prototype = Object.extend(new CommonHandler(), {
+CommonListingProductVariationHandler = Class.create();
+CommonListingProductVariationHandler.prototype = Object.extend(new CommonHandler(), {
 
     //----------------------------------
 

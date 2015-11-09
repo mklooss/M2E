@@ -7,6 +7,8 @@
 class Ess_M2ePro_Block_Adminhtml_Common_Synchronization
     extends Ess_M2ePro_Block_Adminhtml_Common_Component_Tabs_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -25,58 +27,26 @@ class Ess_M2ePro_Block_Adminhtml_Common_Synchronization
 
         $this->_headerText = '';
 
-        if (!(bool)$this->getRequest()->getParam('wizard',false)) {
+        $this->setTemplate(NULL);
 
-            $this->setTemplate(NULL);
+        //------------------------------
+        $params = Mage::helper('M2ePro')->escapeHtml(
+            json_encode(Mage::helper('M2ePro/View_Common_Component')->getActiveComponents())
+        );
+        $this->_addButton('run_all_enabled_now', array(
+            'label'     => Mage::helper('M2ePro')->__('Synchronize'),
+            'onclick'   => 'SynchronizationHandlerObj.saveSettings(\'runAllEnabledNow\', ' . $params . ');',
+            'class'     => 'save'
+        ));
+        //------------------------------
 
-            //------------------------------
-            $params = Mage::helper('M2ePro')->escapeHtml(
-                json_encode(Mage::helper('M2ePro/View_Common_Component')->getActiveComponents())
-            );
-            $this->_addButton('run_all_enabled_now', array(
-                'label'     => Mage::helper('M2ePro')->__('Run Enabled Now'),
-                'onclick'   => 'SynchronizationHandlerObj.saveSettings(\'runAllEnabledNow\', ' . $params . ');',
-                'class'     => 'save'
-            ));
-            //------------------------------
-
-            //------------------------------
-            $this->_addButton('save', array(
-                'label'     => Mage::helper('M2ePro')->__('Save Settings'),
-                'onclick'   => 'SynchronizationHandlerObj.saveSettings(\'\', ' . $params . ')',
-                'class'     => 'save'
-            ));
-            //------------------------------
-        } else {
-
-            // Set header text
-            //------------------------------
-            $this->_headerText = Mage::helper('M2ePro')->__('Synchronization');
-            //------------------------------
-
-            $activeWizardNick = Mage::helper('M2ePro/Module_Wizard')->getNick(
-                Mage::helper('M2ePro/Module_Wizard')->getActiveWizard(Ess_M2ePro_Helper_View_Common::NICK)
-            );
-
-            $this->setEnabledTab($activeWizardNick);
-
-            //------------------------------
-            $escapedWizardNick = Mage::helper('M2ePro')->escapeHtml("'" . $activeWizardNick . "'");
-            $this->_addButton('save', array(
-                'label'     => Mage::helper('M2ePro')->__('Save Settings'),
-                'onclick'   => 'SynchronizationHandlerObj.saveSettings(\'\',' . $escapedWizardNick . ')',
-                'class'     => 'save'
-            ));
-            //------------------------------
-
-            //------------------------------
-            $this->_addButton('close', array(
-                'label'     => Mage::helper('M2ePro')->__('Complete This Step'),
-                'onclick'   => 'SynchronizationHandlerObj.completeStep();',
-                'class'     => 'close'
-            ));
-            //------------------------------
-        }
+        //------------------------------
+        $this->_addButton('save', array(
+            'label'     => Mage::helper('M2ePro')->__('Save'),
+            'onclick'   => 'SynchronizationHandlerObj.saveSettings(\'\', ' . $params . ')',
+            'class'     => 'save'
+        ));
+        //------------------------------
     }
 
     protected function _toHtml()
@@ -153,15 +123,8 @@ JAVASCRIPT;
             $hideChannels = ' style="visibility: hidden"';
         }
 
-        $hideTabsHeader = '';
-        $help = '';
-        if ((bool)$this->getRequest()->getParam('wizard',false)) {
-            $hideTabsHeader = ' style="display: none"';
-            $help = $this->getLayout()->createBlock('M2ePro/adminhtml_common_synchronization_help')->toHtml();
-        }
-
         return <<<HTML
-<div class="content-header skip-header"{$hideTabsHeader}>
+<div class="content-header skip-header">
     <table cellspacing="0">
         <tr>
             <td{$hideChannels}>{$tabsContainer->toHtml()}</td>
@@ -169,27 +132,9 @@ JAVASCRIPT;
         </tr>
     </table>
 </div>
-{$help}
 {$formBlock->toHtml()}
 HTML;
 
-    }
-
-    // ########################################
-
-    public function canShowRunNowButton($nick)
-    {
-        if (!(bool)$this->getRequest()->getParam('wizard',false)) {
-            return true;
-        }
-
-        $activeWizard = Mage::helper('M2ePro/Module_Wizard')->getActiveWizard(Ess_M2ePro_Helper_View_Common::NICK);
-
-        if (!$activeWizard || Mage::helper('M2ePro/Module_Wizard')->getNick($activeWizard) != $nick) {
-            return true;
-        }
-
-        return false;
     }
 
     // ########################################
@@ -204,5 +149,4 @@ HTML;
     }
 
     // ########################################
-
 }

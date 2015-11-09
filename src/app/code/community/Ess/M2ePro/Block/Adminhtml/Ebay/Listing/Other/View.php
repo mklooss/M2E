@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Other_View extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();

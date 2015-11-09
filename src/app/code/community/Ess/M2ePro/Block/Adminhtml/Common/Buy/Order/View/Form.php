@@ -10,6 +10,8 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Order_View_Form extends Ess_M2ePro_B
 
     public $realMagentoOrderId = NULL;
 
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -109,4 +111,6 @@ class Ess_M2ePro_Block_Adminhtml_Common_Buy_Order_View_Form extends Ess_M2ePro_B
 
         return $currencyHelper->getConvertRateFromBase($this->order->getChildObject()->getCurrency(), $store) != 0;
     }
+
+    // ####################################
 }

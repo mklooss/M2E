@@ -632,14 +632,17 @@ class Ess_M2ePro_Model_Ebay_Synchronization_Templates_Inspector
 
         if (!$ebayListingProduct->isVariationsReady()) {
 
-            $needRevise = $this->checkRevisePricesRequirements(
-                $ebaySynchronizationTemplate,
-                $ebayListingProduct->getOnlineBuyItNowPrice(),
-                $ebayListingProduct->getBuyItNowPrice()
-            );
+            if ($ebayListingProduct->isListingTypeFixed()) {
 
-            if ($needRevise) {
-                return true;
+                $needRevise = $this->checkRevisePricesRequirements(
+                    $ebaySynchronizationTemplate,
+                    $ebayListingProduct->getOnlineCurrentPrice(),
+                    $ebayListingProduct->getFixedPrice()
+                );
+
+                 if ($needRevise) {
+                    return true;
+                }
             }
 
             if ($ebayListingProduct->isListingTypeAuction()) {
@@ -658,6 +661,16 @@ class Ess_M2ePro_Model_Ebay_Synchronization_Templates_Inspector
                     $ebaySynchronizationTemplate,
                     $ebayListingProduct->getOnlineReservePrice(),
                     $ebayListingProduct->getReservePrice()
+                );
+
+                if ($needRevise) {
+                    return true;
+                }
+
+                $needRevise = $this->checkRevisePricesRequirements(
+                    $ebaySynchronizationTemplate,
+                    $ebayListingProduct->getOnlineBuyItNowPrice(),
+                    $ebayListingProduct->getBuyItNowPrice()
                 );
 
                 if ($needRevise) {
@@ -842,7 +855,7 @@ class Ess_M2ePro_Model_Ebay_Synchronization_Templates_Inspector
             return true;
         }
 
-        $deviation = abs($onlinePrice - $productPrice) / $onlinePrice * 100;
+        $deviation = round(abs($onlinePrice - $productPrice) / $onlinePrice * 100, 2);
 
         return $deviation > $ebaySynchronizationTemplate->getReviseUpdatePriceMaxAllowedDeviation();
     }

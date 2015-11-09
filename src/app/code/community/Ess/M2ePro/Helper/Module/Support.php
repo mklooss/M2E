@@ -30,54 +30,61 @@ class Ess_M2ePro_Helper_Module_Support extends Mage_Core_Helper_Abstract
 
     //#############################################
 
-    public function getDocumentationUrl($view = NULL)
+    public function getDocumentationUrl($component = NULL, $articleUrl = NULL)
     {
-        is_null($view) && $view = Mage::helper('M2ePro/View')->getCurrentView();
+        $urlParts[] = Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'documentation_url');
+        $urlParts[] = 'display';
 
-        switch ($view) {
-            case Ess_M2ePro_Helper_View_Common::NICK:
-                return Mage::helper('M2ePro/View_Common')->getDocumentationUrl();
+        if ($component) {
 
-            case Ess_M2ePro_Helper_View_Ebay::NICK:
-            default:
-                return Mage::helper('M2ePro/View_Ebay')->getDocumentationUrl();
+            if ($component == Ess_M2ePro_Helper_Component_Ebay::NICK) {
+                $urlParts[] = 'eBayMagentoV6X';
+            } elseif ($component == Ess_M2ePro_Helper_Component_Amazon::NICK) {
+                $urlParts[] = 'AmazonMagentoV6X';
+            } elseif ($component == Ess_M2ePro_Helper_Component_Buy::NICK) {
+                $urlParts[] = 'RakutenMagentoV6X';
+            } else {
+                throw new LogicException('Invalid Channel.');
+            }
         }
+
+        if ($articleUrl) {
+            $urlParts[] = trim($articleUrl, '/');
+        }
+
+        return implode('/', $urlParts);
     }
 
-    public function getVideoTutorialsUrl($view = NULL)
+    public function getKnowledgeBaseUrl($articleUrl = NULL)
     {
-        is_null($view) && $view = Mage::helper('M2ePro/View')->getCurrentView();
+        $urlParts[] = Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'knowledge_base_url');
 
-        switch ($view) {
-            case Ess_M2ePro_Helper_View_Common::NICK:
-                return Mage::helper('M2ePro/View_Common')->getVideoTutorialsUrl();
-
-            case Ess_M2ePro_Helper_View_Ebay::NICK:
-            default:
-                return Mage::helper('M2ePro/View_Ebay')->getVideoTutorialsUrl();
+        if ($articleUrl) {
+            $urlParts[] = 'articles';
+            $urlParts[] = trim($articleUrl, '/');
         }
+
+        return implode('/', $urlParts);
+    }
+
+    public function getVideoTutorialsUrl($component)
+    {
+        return $this->getDocumentationUrl($component,'Video+Tutorials');
     }
 
     //#############################################
 
-    public function getKnowledgeBaseUrl()
+    public function getMainWebsiteUrl()
     {
-        return Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'knowledge_base_url');
+        return Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'main_website_url');
     }
-
-    //----------------------------------
 
     public function getClientsPortalBaseUrl()
     {
         return Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'clients_portal_url');
     }
 
-    //----------------------------------
-
-    public function getMainWebsiteUrl()
-    {
-        return Mage::helper('M2ePro/Module')->getConfig()->getGroupValue('/support/', 'main_website_url');
-    }
+    // -------------------------------------------
 
     public function getMainSupportUrl()
     {

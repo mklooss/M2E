@@ -11,8 +11,6 @@ class Ess_M2ePro_Model_Ebay_Listing extends Ess_M2ePro_Model_Component_Child_Eba
 {
     const ADDING_MODE_ADD_AND_ASSIGN_CATEGORY = 2;
 
-    // ########################################
-
     /**
      * @var Ess_M2ePro_Model_Ebay_Template_Category
      */
@@ -530,7 +528,7 @@ class Ess_M2ePro_Model_Ebay_Listing extends Ess_M2ePro_Model_Component_Child_Eba
             'ebay_item_id' => $ebayItem->getId(),
             'online_sku' => $listingOtherProduct->getChildObject()->getSku(),
             'online_title' => $listingOtherProduct->getChildObject()->getTitle(),
-            'online_buyitnow_price' => $listingOtherProduct->getChildObject()->getOnlinePrice(),
+            'online_current_price' => $listingOtherProduct->getChildObject()->getOnlinePrice(),
             'online_qty' => $listingOtherProduct->getChildObject()->getOnlineQty(),
             'online_qty_sold' => $listingOtherProduct->getChildObject()->getOnlineQtySold(),
             'online_bids' => $listingOtherProduct->getChildObject()->getOnlineBids(),

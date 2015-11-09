@@ -72,13 +72,13 @@ class Ess_M2ePro_Model_Amazon_Search_Custom
         $amazonHelper     = Mage::helper('M2ePro/Component_Amazon');
         $strippedQuery    = $this->getStrippedQuery();
 
-        if ($amazonHelper->isASIN($strippedQuery) || $validationHelper->isISBN10($strippedQuery)) {
+        if ($amazonHelper->isASIN($strippedQuery)) {
             return 'byAsin';
         }
 
         if ($validationHelper->isEAN($strippedQuery) ||
             $validationHelper->isUPC($strippedQuery) ||
-            $validationHelper->isISBN13($strippedQuery)
+            $validationHelper->isISBN($strippedQuery)
         ) {
             return 'byIdentifier';
         }

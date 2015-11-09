@@ -28,7 +28,7 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
     {
         $data = array();
 
-        if (!$this->getConfigurator()->isDetails()) {
+        if (!$this->getConfigurator()->isDetailsAllowed()) {
             return $data;
         }
 
@@ -128,22 +128,9 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
 
         $data = array(
             'brand'                    => $source->getBrand(),
+
             'manufacturer'             => $source->getManufacturer(),
             'manufacturer_part_number' => $source->getManufacturerPartNumber(),
-
-            'item_dimensions_volume'                 => $source->getItemDimensionsVolume(),
-            'item_dimensions_volume_unit_of_measure' => $source->getItemDimensionsVolumeUnitOfMeasure(),
-            'item_dimensions_weight'                 => $source->getItemDimensionsWeight(),
-            'item_dimensions_weight_unit_of_measure' => $source->getItemDimensionsWeightUnitOfMeasure(),
-
-            'package_dimensions_volume'                 => $source->getPackageDimensionsVolume(),
-            'package_dimensions_volume_unit_of_measure' => $source->getPackageDimensionsVolumeUnitOfMeasure(),
-
-            'package_weight'                  => $source->getPackageWeight(),
-            'package_weight_unit_of_measure'  => $source->getPackageWeightUnitOfMeasure(),
-
-            'shipping_weight'                 => $source->getShippingWeight(),
-            'shipping_weight_unit_of_measure' => $source->getShippingWeightUnitOfMeasure(),
         );
 
         $this->searchNotFoundAttributes();
@@ -166,6 +153,46 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
         $data['target_audience'] = $this->getDefinitionSource()->getTargetAudience();
         $this->processNotFoundAttributes('Target Audience');
 
+        $this->searchNotFoundAttributes();
+        $data['item_dimensions_volume'] = $source->getItemDimensionsVolume();
+        $this->processNotFoundAttributes('Product Dimensions Volume');
+
+        $this->searchNotFoundAttributes();
+        $data['item_dimensions_volume_unit_of_measure'] = $source->getItemDimensionsVolumeUnitOfMeasure();
+        $this->processNotFoundAttributes('Product Dimensions Measure Units');
+
+        $this->searchNotFoundAttributes();
+        $data['item_dimensions_weight'] = $source->getItemDimensionsWeight();
+        $this->processNotFoundAttributes('Product Dimensions Weight');
+
+        $this->searchNotFoundAttributes();
+        $data['item_dimensions_weight_unit_of_measure'] = $source->getItemDimensionsWeightUnitOfMeasure();
+        $this->processNotFoundAttributes('Product Dimensions Weight Units');
+
+        $this->searchNotFoundAttributes();
+        $data['package_dimensions_volume'] = $source->getPackageDimensionsVolume();
+        $this->processNotFoundAttributes('Package Dimensions Volume');
+
+        $this->searchNotFoundAttributes();
+        $data['package_dimensions_volume_unit_of_measure'] = $source->getPackageDimensionsVolumeUnitOfMeasure();
+        $this->processNotFoundAttributes('Package Dimensions Measure Units');
+
+        $this->searchNotFoundAttributes();
+        $data['package_weight'] = $source->getPackageWeight();
+        $this->processNotFoundAttributes('Package Weight');
+
+        $this->searchNotFoundAttributes();
+        $data['package_weight_unit_of_measure'] = $source->getPackageWeightUnitOfMeasure();
+        $this->processNotFoundAttributes('Package Weight Units');
+
+        $this->searchNotFoundAttributes();
+        $data['shipping_weight'] = $source->getShippingWeight();
+        $this->processNotFoundAttributes('Shipping Weight');
+
+        $this->searchNotFoundAttributes();
+        $data['shipping_weight_unit_of_measure'] = $source->getShippingWeightUnitOfMeasure();
+        $this->processNotFoundAttributes('Shipping Weight Units');
+
         if (is_null($data['package_weight'])) {
             unset(
                 $data['package_weight'],
@@ -174,6 +201,49 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
         }
 
         if (is_null($data['shipping_weight'])) {
+            unset(
+                $data['shipping_weight'],
+                $data['shipping_weight_unit_of_measure']
+            );
+        }
+
+        if (!$this->getVariationManager()->isRelationParentType()) {
+            return array(
+                'description_data' => $data
+            );
+        }
+
+        if (in_array('', $data['item_dimensions_volume']) || $data['item_dimensions_volume_unit_of_measure'] === '') {
+            unset(
+                $data['item_dimensions_volume'],
+                $data['item_dimensions_volume_unit_of_measure']
+            );
+        }
+
+        if ($data['item_dimensions_weight'] === '' || $data['item_dimensions_weight_unit_of_measure'] === '') {
+            unset(
+                $data['item_dimensions_weight'],
+                $data['item_dimensions_weight_unit_of_measure']
+            );
+        }
+
+        if (in_array('', $data['package_dimensions_volume']) ||
+            $data['package_dimensions_volume_unit_of_measure'] === ''
+        ) {
+            unset(
+                $data['package_dimensions_volume'],
+                $data['package_dimensions_volume_unit_of_measure']
+            );
+        }
+
+        if ($data['package_weight'] === '' || $data['package_weight_unit_of_measure'] === '') {
+            unset(
+                $data['package_weight'],
+                $data['package_weight_unit_of_measure']
+            );
+        }
+
+        if ($data['shipping_weight'] === '' || $data['shipping_weight_unit_of_measure'] === '') {
             unset(
                 $data['shipping_weight'],
                 $data['shipping_weight_unit_of_measure']

@@ -6,6 +6,8 @@
 
 class Ess_M2ePro_Block_Adminhtml_Order_Item_Product_Mapping extends Ess_M2ePro_Block_Adminhtml_Widget_Container
 {
+    // ####################################
+
     public function __construct()
     {
         parent::__construct();
@@ -23,4 +25,6 @@ class Ess_M2ePro_Block_Adminhtml_Order_Item_Product_Mapping extends Ess_M2ePro_B
 
         parent::_beforeToHtml();
     }
+
+    // ####################################
 }

@@ -3,6 +3,10 @@ ConfigurationComponentsHandler.prototype = Object.extend(new CommonHandler(), {
 
     //----------------------------------
 
+    componentsTitles: [],
+
+    //----------------------------------
+
     initialize: function()
     {
         Validation.add('M2ePro-check-default-component', M2ePro.translator.translate('Default Component should be enabled.'), function(value) {
@@ -57,6 +61,8 @@ ConfigurationComponentsHandler.prototype = Object.extend(new CommonHandler(), {
 
     updateDefaultComponentSelect: function()
     {
+        var self = this;
+
         var html       = '',
             selected   = '',
 
@@ -74,7 +80,7 @@ ConfigurationComponentsHandler.prototype = Object.extend(new CommonHandler(), {
                     : selected = '';
 
                 html += '<option value="' + nick + '"' + selected + '>' +
-                            M2ePro.php.constant('Ess_M2ePro_Helper_Component_' + nick[0].toUpperCase() + nick.slice(1) + '::TITLE') +
+                            self.componentsTitles[nick] +
                         '</option>';
             }
         });
