@@ -146,22 +146,20 @@ CREATE TABLE m2epro_listing_log (
   parent_listing_product_id int(11) UNSIGNED DEFAULT NULL,
   listing_title VARCHAR(255) DEFAULT NULL,
   product_title VARCHAR(255) DEFAULT NULL,
-  additional_data LONGTEXT DEFAULT NULL,
   action_id INT(11) UNSIGNED DEFAULT NULL,
   action TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   initiator TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-  creator VARCHAR(255) DEFAULT NULL,
   type TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   priority TINYINT(2) UNSIGNED NOT NULL DEFAULT 3,
   description TEXT DEFAULT NULL,
   component_mode VARCHAR(10) DEFAULT NULL,
+  additional_data LONGTEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX action (action),
   INDEX action_id (action_id),
   INDEX component_mode (component_mode),
-  INDEX creator (creator),
   INDEX initiator (initiator),
   INDEX listing_id (listing_id),
   INDEX listing_product_id (listing_product_id),
@@ -209,18 +207,17 @@ CREATE TABLE m2epro_listing_other_log (
   action_id INT(11) UNSIGNED DEFAULT NULL,
   action TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   initiator TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-  creator VARCHAR(255) DEFAULT NULL,
   type TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   priority TINYINT(2) UNSIGNED NOT NULL DEFAULT 3,
   description TEXT DEFAULT NULL,
   component_mode VARCHAR(10) DEFAULT NULL,
+  additional_data LONGTEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX action (action),
   INDEX action_id (action_id),
   INDEX component_mode (component_mode),
-  INDEX creator (creator),
   INDEX initiator (initiator),
   INDEX identifier (identifier),
   INDEX listing_other_id (listing_other_id),
@@ -429,6 +426,7 @@ CREATE TABLE m2epro_order_log (
   initiator TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   message TEXT NOT NULL,
   component_mode VARCHAR(10) DEFAULT NULL,
+  additional_data LONGTEXT DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX component_mode (component_mode),
@@ -571,20 +569,34 @@ CREATE TABLE m2epro_synchronization_log (
   operation_history_id INT(11) UNSIGNED DEFAULT NULL,
   task TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   initiator TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-  creator VARCHAR(255) DEFAULT NULL,
   type TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   priority TINYINT(2) UNSIGNED NOT NULL DEFAULT 3,
   description TEXT DEFAULT NULL,
   component_mode VARCHAR(10) DEFAULT NULL,
+  additional_data LONGTEXT DEFAULT NULL,
   update_date DATETIME DEFAULT NULL,
   create_date DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX component_mode (component_mode),
-  INDEX creator (creator),
   INDEX initiator (initiator),
   INDEX priority (priority),
   INDEX task (task),
   INDEX operation_history_id (operation_history_id),
+  INDEX type (type)
+)
+ENGINE = MYISAM
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+DROP TABLE IF EXISTS m2epro_system_log;
+CREATE TABLE m2epro_system_log (
+  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  type VARCHAR(255) DEFAULT NULL,
+  description TEXT DEFAULT NULL,
+  additional_data LONGTEXT DEFAULT NULL,
+  update_date DATETIME DEFAULT NULL,
+  create_date DATETIME DEFAULT NULL,
+  PRIMARY KEY (id),
   INDEX type (type)
 )
 ENGINE = MYISAM
@@ -818,6 +830,7 @@ INSERT INTO m2epro_config (`group`,`key`,`value`,`notice`,`update_date`,`create_
    '2013-05-08 00:00:00'),
   ('/debug/fatal_error/', 'send_to_server', '1', '0 - disable,\r\n1 - enable', '2013-05-08 00:00:00',
    '2013-05-08 00:00:00'),
+  ('/debug/logging/', 'send_to_server', 1, '0 - disable,\r\n1 - enable', '2015-08-12 00:00:00', '2015-08-12 00:00:00'),
   ('/debug/maintenance/', 'mode', '0', '0 - disable,\r\n1 - enable', '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/debug/maintenance/', 'restore_date', NULL, NULL, '2013-05-08 00:00:00', '2013-05-08 00:00:00'),
   ('/renderer/description/', 'convert_linebreaks', '1', '0 - No\r\n1 - Yes', '2013-05-08 00:00:00',
@@ -882,7 +895,8 @@ INSERT INTO m2epro_wizard VALUES
   (6, 'migrationNewAmazon', 'common', 3, NULL, 1, 5),
   (7, 'removedPlay', 'common', 3, NULL, 0, 6),
   (8, 'ebayProductDetails', 'ebay', 3, NULL, 1, 7),
-  (9, 'fullAmazonCategories', 'common', 3, NULL, 1, 8);
+  (9, 'fullAmazonCategories', 'common', 3, NULL, 1, 8),
+  (10, 'amazonShippingOverridePolicy', 'common', 3, NULL, 1, 9);
 
 SQL
 );
@@ -1535,6 +1549,9 @@ CREATE TABLE m2epro_ebay_template_description (
   gallery_images_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   gallery_images_limit TINYINT(2) UNSIGNED NOT NULL DEFAULT 1,
   gallery_images_attribute VARCHAR(255) NOT NULL,
+  variation_images_mode tinyint(2) UNSIGNED NOT NULL DEFAULT 1,
+  variation_images_limit tinyint(2) UNSIGNED NOT NULL DEFAULT 1,
+  variation_images_attribute varchar(255) NOT NULL,
   default_image_url VARCHAR(255) DEFAULT NULL,
   variation_configurable_images VARCHAR(255) NOT NULL,
   use_supersize_images TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
@@ -1859,7 +1876,8 @@ INSERT INTO m2epro_config (`group`,`key`,`value`,`notice`,`update_date`,`create_
   ('/ebay/sell_on_another_marketplace/', 'tutorial_shown', '0', NULL, '2014-06-25 00:00:00', '2014-06-25 00:00:00'),
   ('/ebay/translation_services/gold/', 'avg_cost', '7.21', NULL, '2014-07-31 00:00:00', '2014-07-31 00:00:00'),
   ('/ebay/translation_services/silver/', 'avg_cost', '1.21', NULL, '2014-07-31 00:00:00', '2014-07-31 00:00:00'),
-  ('/ebay/translation_services/platinum/', 'avg_cost', '17.51', NULL, '2014-07-31 00:00:00', '2014-07-31 00:00:00');
+  ('/ebay/translation_services/platinum/', 'avg_cost', '17.51', NULL, '2014-07-31 00:00:00', '2014-07-31 00:00:00'),
+  ('/ebay/description/', 'upload_images_mode', 2, NULL, '2015-08-21 00:00:00','2015-08-21 00:00:00');
 
 INSERT INTO m2epro_synchronization_config (`group`,`key`,`value`,`notice`,`update_date`,`create_date`) VALUES
   ('/ebay/', 'mode', '1', '0 - disable, \r\n1 - enable',
@@ -2064,7 +2082,7 @@ INSERT INTO m2epro_marketplace VALUES
    '2013-05-08 00:00:00');
 
 INSERT INTO m2epro_ebay_marketplace VALUES
-    (1, 'USD', 'us', 'en_US', 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1),
+    (1, 'USD', 'us', 'en_US', 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1),
     (2, 'CAD,USD', 'ca', 'en_CA', 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1),
     (3, 'GBP', 'gb', 'en_GB', 3, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1),
     (4, 'AUD', 'au', 'en_AU', 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1),
@@ -2082,7 +2100,7 @@ INSERT INTO m2epro_ebay_marketplace VALUES
     (16, 'INR', 'in', 'hi_IN', 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (17, 'EUR', 'ie', 'en_IE', 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (18, 'MYR', 'my', 'ms_MY', 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
-    (19, 'CAD,USD', 'ca', 'fr_CA', 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0),
+    (19, 'CAD,USD', 'ca', 'fr_CA', 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1),
     (20, 'PHP', 'ph', 'fil_PH', 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (21, 'PLN', 'pl', 'pl_PL', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0),
     (22, 'SGD', 'sg', 'zh_SG', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
@@ -2208,6 +2226,20 @@ ENGINE = MYISAM
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
+DROP TABLE IF EXISTS m2epro_amazon_dictionary_shipping_override;
+CREATE TABLE m2epro_amazon_dictionary_shipping_override (
+  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  marketplace_id INT(11) UNSIGNED NOT NULL,
+  `service` VARCHAR(255) NOT NULL,
+  `location` VARCHAR(255) NOT NULL,
+  `option` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX marketplace_id (marketplace_id)
+)
+ENGINE = MYISAM
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
 DROP TABLE IF EXISTS m2epro_amazon_item;
 CREATE TABLE m2epro_amazon_item (
   id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2317,6 +2349,7 @@ DROP TABLE IF EXISTS m2epro_amazon_listing_product;
 CREATE TABLE m2epro_amazon_listing_product (
   listing_product_id INT(11) UNSIGNED NOT NULL,
   template_description_id INT(11) UNSIGNED DEFAULT NULL,
+  template_shipping_override_id INT(11) UNSIGNED DEFAULT NULL,
   is_variation_product TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   is_variation_product_matched TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   is_variation_channel_matched TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
@@ -2354,6 +2387,7 @@ CREATE TABLE m2epro_amazon_listing_product (
   INDEX variation_parent_need_processor (variation_parent_need_processor),
   INDEX variation_parent_id (variation_parent_id),
   INDEX is_general_id_owner (is_general_id_owner),
+  INDEX template_shipping_override_id (template_shipping_override_id),
   INDEX template_description_id (template_description_id)
 )
 ENGINE = INNODB
@@ -2453,6 +2487,38 @@ CREATE TABLE m2epro_amazon_processed_inventory (
   INDEX sku (sku)
 )
 ENGINE = MYISAM
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+DROP TABLE IF EXISTS m2epro_amazon_template_shipping_override;
+CREATE TABLE m2epro_amazon_template_shipping_override (
+    id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    marketplace_id INT(11) UNSIGNED NOT NULL,
+    update_date datetime DEFAULT NULL,
+    create_date datetime DEFAULT NULL,
+    PRIMARY KEY (id),
+    INDEX title (title),
+    INDEX marketplace_id (marketplace_id)
+)
+ENGINE = INNODB
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+DROP TABLE IF EXISTS m2epro_amazon_template_shipping_override_service;
+CREATE TABLE m2epro_amazon_template_shipping_override_service (
+  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  template_shipping_override_id INT(11) UNSIGNED NOT NULL,
+  `service` VARCHAR(255) NOT NULL,
+  `location` VARCHAR(255) NOT NULL,
+  `option` VARCHAR(255) NOT NULL,
+  type TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  cost_mode TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+  cost_value VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX template_shipping_override_id (template_shipping_override_id)
+)
+ENGINE = INNODB
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
@@ -2631,6 +2697,7 @@ CREATE TABLE m2epro_amazon_template_synchronization (
   revise_update_details TINYINT(2) UNSIGNED NOT NULL,
   revise_update_images TINYINT(2) UNSIGNED NOT NULL,
   revise_change_description_template tinyint(2) UNSIGNED NOT NULL,
+  revise_change_shipping_override_template tinyint(2) UNSIGNED NOT NULL,
   relist_mode TINYINT(2) UNSIGNED NOT NULL,
   relist_filter_user_lock TINYINT(2) UNSIGNED NOT NULL,
   relist_send_data TINYINT(2) UNSIGNED NOT NULL,
